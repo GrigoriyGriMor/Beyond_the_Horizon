@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbe379160bf26e84e871f6f9133480d4, type: 3}
+  m_Name: Quest [2]
+  m_EditorClassIdentifier: 
+  questData:
+    ID: 2
+    titleQuest: Monthly mission
+    discriptionQuest: Monthly test. The task of killing enemies is to destroy 25
+      mammoths.
+    typeQuest: 1
+    timerQuest: 1
+    day: 31
+    hour: 12
+    minute: 0
+    levelPlayer: 0
+    statusQuest: 0
+    experience: 650
+    coins: 130
+    itemBase:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    currentStepNumber: 0
+    image1x1: {fileID: 21300000, guid: 84e0aa35a108fd84d9d27fe5a246fb85, type: 3}
+    image2x1: {fileID: 21300000, guid: 8e6ddcc5842b73b499798953a53fbb47, type: 3}
+    arrayStepsQuests:
+    - nextStepNumber: 0
+      titleStep: 1
+      descriptionStep: 
+      actionCounts:
+      - textAction: Destroy 25 Mammoths
+        currentCount: 0
+        maxCount: 25

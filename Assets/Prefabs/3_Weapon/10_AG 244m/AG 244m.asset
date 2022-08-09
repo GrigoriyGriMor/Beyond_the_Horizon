@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf258e4cadc6540478bd1ee570f1b597, type: 3}
+  m_Name: AG 244m
+  m_EditorClassIdentifier: 
+  itemType: 0
+  itemName: AG 244m
+  discription: The morally obsolete representative of the once great series of weapons,
+    having tangible dimensions, boasts an average rate of fire. The recoil is at
+    an average level, the number of cartridges in the store does not differ from
+    other representatives of this class of weapons.
+  ObjectWithClass: {fileID: 8065988330759090294, guid: 7a2c05257c1c03e48837cfa480d234e0, type: 3}
+  SceneObjectVisual: {fileID: 5285017423252129055, guid: 02b0d588624007f44b951b96164f4b9b, type: 3}
+  sprite_1x1: {fileID: 21300000, guid: ca53e966af9233e4ebf81a7a72037574, type: 3}
+  sprite_2x1: {fileID: 21300000, guid: cfdb801452704984dade11e05f8d3616, type: 3}
+  sprite_1x2: {fileID: 0}
+  grade: 3
+  itemBasePrice: 155
+  ItemWeight: 17
+  canBeStack: 0
+  itemParam:
+  - parameterName: Damage
+    parameterValue: 31
+  - parameterName: Max. fire distance
+    parameterValue: 160
+  - parameterName: Effect. fire distance
+    parameterValue: 80
+  - parameterName: Rate of fire
+    parameterValue: 600
+  - parameterName: Recharge
+    parameterValue: 2.1
+  - parameterName: Store volume
+    parameterValue: 30

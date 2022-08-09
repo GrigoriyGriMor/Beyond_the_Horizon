@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbe379160bf26e84e871f6f9133480d4, type: 3}
+  m_Name: '[3] Quest'
+  m_EditorClassIdentifier: 
+  questData:
+    ID: 2
+    titleQuest: "\u0423\u0431\u0438\u0442\u044C 5 \u0433\u0443\u043B\u0435\u0439 "
+    discriptionQuest: "\u0415\u0436\u0435\u0434\u043D\u0435\u0432\u043D\u0430\u044F
+      \u0437\u0430\u0434\u0430\u0447\u0430 \u043F\u043E \u0443\u0431\u0438\u0439\u0441\u0442\u0432\u0443
+      \u0432\u0440\u0430\u0433\u043E\u0432"
+    typeQuest: 1
+    timerQuest: 1
+    day: 18
+    hour: 10
+    minute: 10
+    levelPlayer: 0
+    statusQuest: 0
+    experience: 650
+    coins: 130
+    itemBase: {fileID: 11400000, guid: f19d7c48585828d4c800b92b9c053c23, type: 2}
+    currentStepNumber: 0
+    image1x1: {fileID: 21300000, guid: 84e0aa35a108fd84d9d27fe5a246fb85, type: 3}
+    image2x1: {fileID: 21300000, guid: 8e6ddcc5842b73b499798953a53fbb47, type: 3}
+    arrayStepsQuests:
+    - nextStepNumber: 0
+      titleStep: 1
+      descriptionStep: 
+      actionCounts:
+      - textAction: "\u0423\u0431\u0438\u0442\u044C 5 \u0433\u0443\u043B\u0435\u0439"
+        currentCount: 0
+        maxCount: 5

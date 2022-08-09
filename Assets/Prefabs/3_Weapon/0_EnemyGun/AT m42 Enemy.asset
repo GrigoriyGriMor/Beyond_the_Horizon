@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf258e4cadc6540478bd1ee570f1b597, type: 3}
+  m_Name: AT m42 Enemy
+  m_EditorClassIdentifier: 
+  itemType: 0
+  itemName: AT m42 Enemy
+  discription: The best representative of this class of weapons. It has acceptable
+    dimensions and boasts a rate of fire and accuracy of shooting. The recoil is
+    practically not felt, the number of cartridges in the store does not differ from
+    other representatives of this class of weapons.
+  ObjectWithClass: {fileID: 8065988330759090294, guid: cceb14e5e677e1b499dd94e5bed3ee40, type: 3}
+  SceneObjectVisual: {fileID: 5285017423252129055, guid: 558f4ca356f451442a4a7cd2f7ec8466, type: 3}
+  sprite_1x1: {fileID: 21300000, guid: c5e9ccb42e185304bb8b17297625a51c, type: 3}
+  sprite_2x1: {fileID: 21300000, guid: 3c9a794a5ac59af45abf8cbf501181af, type: 3}
+  sprite_1x2: {fileID: 0}
+  grade: 3
+  itemBasePrice: 50
+  ItemWeight: 14
+  canBeStack: 0
+  itemParam:
+  - parameterName: Max. firing distance
+    parameterValue: 140
+  - parameterName: Effect. fire distance
+    parameterValue: 70
+  - parameterName: Rate of fire
+    parameterValue: 610
+  - parameterName: Recharge
+    parameterValue: 2.1
+  - parameterName: Store volume
+    parameterValue: 30
