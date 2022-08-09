@@ -1,0 +1,257 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
+public class InDamageModule : CharacterBase
+{
+    [Header("Heal Point")]
+    [SerializeField] private float currentHeal = 100.0f;
+    [SerializeField] private float maxHeal = 100.0f;
+    [SerializeField] private Text healText;
+
+    [Header("Shield Point")]
+    [SerializeField] private float currentShield = 20.0f;
+    [SerializeField] private float maxShield = 20.0f;
+    [SerializeField] private Text shieldText;
+
+    [Header("Visualiling")]
+    [SerializeField] private ParticleSystem inDamageShieldParticle;
+    [SerializeField] private ParticleSystem inDamageParticle;
+    [SerializeField] private Slider healPointBar;
+    [SerializeField] private Slider shieldPointBar;
+
+    [SerializeField] private ParticleSystem shieldDestroyParticle;
+
+    public UnityEvent deach;
+
+    /// Обьект который нанес Урон
+    private Transform objectDamage;
+
+    [SerializeField] private Volume damageVignette;
+    private Vignette bloom;
+    private float maxVegnetteValue = 0.5f;
+
+    [Header("Скорость востановления хп")]
+    [SerializeField] private float healRegen = 15.0f;
+    [SerializeField] private float healRegenTime = 5.0f;
+    [SerializeField] private ParticleSystem healParticle;
+
+    private void Start()
+    {
+        if (damageVignette) {
+            damageVignette.profile.TryGet(out bloom);
+            bloom.intensity.value = 0;
+        }
+
+        currentHeal = maxHeal;
+        healPointBar.maxValue = maxHeal;
+        healPointBar.value = currentHeal;
+        if (healText) healText.text = currentHeal.ToString();
+
+        currentShield = maxShield;
+        shieldPointBar.maxValue = maxShield;
+        shieldPointBar.value = currentShield;
+        if (shieldText) shieldText.text = currentShield.ToString();
+
+        StartCoroutine(WaitStart());
+    }
+
+    bool gameIsPlayer = false;
+    private IEnumerator WaitStart()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        gameIsPlayer = true;
+        StartCoroutine(HealRegeniration());
+    }
+
+    float lastShield;
+    public void InDamage(float damage, RaycastHit hit, Transform objectDamage = null)
+    {
+        if (currentHeal <= 0) return;
+        if (objectDamage) this.objectDamage = objectDamage;     // Solo
+        if (state != SupportClass.gameState.client && state != SupportClass.gameState.clone)
+        {
+            lastShield = currentShield;
+
+            if (currentShield <= 0)
+                currentHeal -= damage;
+            else
+            {
+                currentShield -= damage * 0.75f;
+                currentHeal -= damage * 0.25f;
+            }
+
+            if (damageVignette) {
+                float pecent = (healPointBar.value * 100) / maxHeal;
+                bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
+            }
+
+            if (healPointBar != null) healPointBar.value = currentHeal;
+            if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
+
+            if (shieldPointBar != null) shieldPointBar.value = currentShield;
+            if (shieldText) shieldText.text = Mathf.CeilToInt(Mathf.Clamp(currentShield, 0, maxShield)).ToString();
+
+            if (currentHeal <= 0)
+                Deach();
+        }
+
+
+        if (hit.collider != null) {
+            if (lastShield > 0) {
+                if (inDamageShieldParticle != null) {
+                    inDamageShieldParticle.transform.position = hit.point;
+                    inDamageShieldParticle.Play();
+                }            }
+            else {
+                if (inDamageParticle != null) {
+                    inDamageParticle.transform.position = hit.point;
+                    inDamageParticle.Play();
+                }     
+            }
+        }
+
+        if ((lastShield > 0 && currentShield <= 0) && shieldDestroyParticle != null)
+            shieldDestroyParticle.Play();
+    }
+
+    public void InHealing(float healPoint, bool shield = false) {
+        if (currentHeal <= 0) return;
+
+        if (state != SupportClass.gameState.client && state != SupportClass.gameState.clone) {
+            if (shield) {
+                currentShield = Mathf.Clamp(currentShield + healPoint, 0, maxShield);
+
+                if (shieldPointBar != null) shieldPointBar.value = currentShield;
+                if (shieldText) shieldText.text = Mathf.CeilToInt(Mathf.Clamp(currentShield, 0, maxShield)).ToString();
+            }
+            else {
+                currentHeal = Mathf.Clamp(currentHeal + healPoint, 0, maxHeal);
+
+                if (damageVignette) {
+                    float pecent = (healPointBar.value * 100) / maxHeal;
+                    bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
+                }
+
+                if (healPointBar != null) healPointBar.value = currentHeal;
+                if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
+            }
+        }
+    }
+
+    private IEnumerator HealRegeniration() {
+        yield return new WaitForSeconds(healRegenTime);
+
+        if (currentHeal > 0 && currentHeal != maxHeal) {
+            if (state != SupportClass.gameState.client && state != SupportClass.gameState.clone) {
+                currentHeal = Mathf.Clamp((currentHeal + healRegen), 0, maxHeal);
+                if (healParticle) healParticle.Play();
+
+                if (healPointBar != null) healPointBar.value = currentHeal;
+                if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
+
+                if (damageVignette) {
+                    float pecent = (healPointBar.value * 100) / maxHeal;
+                    bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
+                }
+            }
+        }
+
+        StartCoroutine(HealRegeniration());
+    }
+
+    public void InDamageAfterFall(float damage)
+    {
+        if (currentHeal <= 0) return;
+
+        if (state != SupportClass.gameState.client && state != SupportClass.gameState.clone)
+        {
+            currentHeal -= damage;
+
+            if (damageVignette) {
+                float pecent = (healPointBar.value * 100) / maxHeal;
+                bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
+            }
+
+            if (healPointBar != null) healPointBar.value = currentHeal;
+            if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
+
+            if (currentHeal <= 0)
+                Deach();
+        }
+    }
+
+    private void Deach()
+    {
+        if (damageVignette) bloom.intensity.value = 0.75f;
+
+        deach.Invoke();
+        if (playerAnim)
+        {
+            playerAnim.SetTrigger("Die");
+        }
+    }
+
+    public float GetHeal()
+    {
+        return currentHeal;
+    }
+
+    public void SetHeal(float newHP)
+    {
+        if (!gameIsPlayer || currentHeal <= 0) return;
+
+        currentHeal = newHP;
+        if (healPointBar != null) healPointBar.value = currentHeal;
+        if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
+
+        if (damageVignette) {
+            float pecent = (healPointBar.value * 100) / maxHeal;
+            bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
+        }
+
+        if (currentHeal <= 0)
+            Deach();
+    }
+
+    public void SetShield(float newShield)
+    {
+        if (!gameIsPlayer || currentHeal <= 0) return;
+
+        currentShield = newShield;
+        if (shieldPointBar != null) shieldPointBar.value = currentShield;
+        if (shieldText) shieldText.text = Mathf.CeilToInt(Mathf.Clamp(currentShield, 0, maxShield)).ToString();
+    }
+
+    public float GetShield()
+    {
+        return currentShield;
+    }
+
+    public void ReloadParam()
+    {
+        if (damageVignette) 
+            bloom.intensity.value = 0;
+
+        currentHeal = maxHeal;
+        currentShield = maxShield;
+
+        SetHeal(maxHeal);
+        SetShield(maxShield);
+
+        //if (healPointBar != null) startHealVisual = healPointBar.rect.width;
+        //if (shieldPointBar != null) startShieldVisual = shieldPointBar.rect.width;
+    }
+
+    /// Возвращает Обьект который нанес Урон
+    /// SOLO
+    public Transform GetTarget()
+    {
+        return objectDamage;
+    }
+}
