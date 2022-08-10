@@ -423,7 +423,7 @@ Transform:
   - {fileID: 3443944161355388772}
   - {fileID: 3446030712182900929}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3443944160723967477
 Rigidbody:
@@ -499,7 +499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _name: Lamody
   _eventName: 3
-  type: 4
+  type: 5
   rotateCar: RotateCar
   crashCar: CrashCar
   sitDown: SitDown
@@ -522,6 +522,9 @@ MonoBehaviour:
   textHotKey: {fileID: 6617675264362087493}
   textSpeedCar: {fileID: 5948137290766389187}
   exitCar:
+    m_PersistentCalls:
+      m_Calls: []
+  sitDownCar:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &3443944161317723518
