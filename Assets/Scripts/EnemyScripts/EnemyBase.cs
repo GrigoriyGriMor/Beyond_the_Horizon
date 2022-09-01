@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EnemyBase : MonoBehaviour
 {
-    public SupportClass.gameState UDPState = SupportClass.gameState.test;
     private uint warrior_ID;
     public int body_type = 0;
 
@@ -14,7 +13,6 @@ public class EnemyBase : MonoBehaviour
     [Header("—сылка на цель дл€ Rig")]
     public Transform targetGun;
 
-    [HideInInspector] public ushort w_attack = 0;
     private WeaponController currentWeapon;
     private EnemyAnimator _enemyAnimator;
     private InDamageModule damageModule;
@@ -80,160 +78,8 @@ public class EnemyBase : MonoBehaviour
         damageModule = GetComponent<InDamageModule>();
         damageModule.deach.AddListener(DropItem);
 
-
-        if (UDPState == SupportClass.gameState.clone && type == 2)
-            currentWeapon = GetComponent<AttackEnemy>().GetWeaponRef();
         thisTransform = transform;
     }
-
-    public WarriorData GetWarriorData()
-    {
-        WarriorData newData = new WarriorData();
-
-        newData.warriorID = warrior_ID;
-        newData.w_type = type;
-
-        newData.w_pos_X = transform.position.x;
-        newData.w_pos_Y = transform.position.y;
-        newData.w_pos_Z = transform.position.z;
-
-        newData.w_rotate_X = transform.eulerAngles.x;
-        newData.w_rotate_Y = transform.eulerAngles.y;
-        newData.w_rotate_Z = transform.eulerAngles.z;
-
-        newData.w_heal_count = damageModule.GetHeal();
-        newData.w_shield_count = damageModule.GetShield();
-
-        if (type == 2)
-        {
-            newData.w_target_posX = targetGun.position.x;
-            newData.w_target_posY = targetGun.position.y;
-            newData.w_target_posZ = targetGun.position.z;
-
-            newData.distance_w_attack = w_attack;
-        }
-
-        float[] layerW = new float[2];
-        for (int i = 0; i < _enemyAnimator.animator.layerCount; i++)
-            layerW[i] = _enemyAnimator.animator.GetLayerWeight(i);
-
-        newData.animLayerWeight = layerW;
-
-        AnimatorParamData[] apd = new AnimatorParamData[_enemyAnimator.animator.parameterCount];
-        for (int i = 0; i < _enemyAnimator.animator.parameterCount; i++)
-        {
-            apd[i].indexParam = i;
-
-            switch (_enemyAnimator.animator.parameters[i].type)
-            {
-                case (AnimatorControllerParameterType.Float):
-                    apd[i].type = 0;
-                    apd[i].defaultFloat = _enemyAnimator.animator.GetFloat(_enemyAnimator.animator.parameters[i].name);
-                    break;
-                case (AnimatorControllerParameterType.Bool):
-                    apd[i].type = 1;
-                    if (_enemyAnimator.animator.GetBool(_enemyAnimator.animator.parameters[i].name))
-                        apd[i].defaultBool = 1;
-                    else
-                        apd[i].defaultBool = 0;
-                    break;
-                case (AnimatorControllerParameterType.Trigger):
-                    apd[i].defaultTrigger = 0;
-                    for (int j = 0; j < _enemyAnimator.triggerActive.Count; j++)
-                    {
-                        if (i == _enemyAnimator.triggerActive[j])
-                        {
-                            apd[i].defaultTrigger = 1;
-                            _enemyAnimator.triggerActive.RemoveAt(j);
-                        }
-                    }
-                    apd[i].type = 2;
-                    break;
-                case (AnimatorControllerParameterType.Int):
-                    apd[i].type = 3;
-                    apd[i].defaultInt = _enemyAnimator.animator.GetInteger(_enemyAnimator.animator.parameters[i].name);
-                    break;
-            }
-        }
-        newData.animParam = apd;
-
-        return newData;
-    }
-
-    public void SetServerParamSinc(Vector3 w_Pos, Vector3 w_Rotation, float w_Heal, float w_Shield, Vector3 w_target_Pos,
-        ushort w_attack, float[] _animLayerWeight, AnimatorParamData[] _animParam)
-    {
-
-        currentWarriorPosition = w_Pos;
-        currentWarriorRotation = w_Rotation;
-
-        damageModule.SetHeal(w_Heal);
-        damageModule.SetShield(w_Shield);
-
-        if (type == 2)
-        {
-            targetGun.position = w_target_Pos;
-            currentAttack = w_attack;
-        }
-
-        if (_animLayerWeight.Length <= _enemyAnimator.animator.layerCount)
-            for (int i = 0; i < _animLayerWeight.Length; i++)
-                _enemyAnimator.animator.SetLayerWeight(i, _animLayerWeight[i]);
-        else
-            for (int i = 0; i < _enemyAnimator.animator.layerCount; i++)
-                _enemyAnimator.animator.SetLayerWeight(i, _animLayerWeight[i]);
-
-        for (int j = 0; j < _animParam.Length; j++)
-        {
-            string name;
-            if (_animParam[j].indexParam < _enemyAnimator.animator.parameterCount)
-                name = _enemyAnimator.animator.GetParameter(_animParam[j].indexParam).name;
-            else
-            {
-                if (ConsoleScript.Instance) ConsoleScript.Instance.AddConsoleText($"Enemy Animator param count {_enemyAnimator.animator.parameterCount} <= server_anim_param_count {_animParam[j].indexParam}");
-                break;
-            }
-
-            switch (_animParam[j].type)
-            {
-                case (0):
-                    _enemyAnimator.animator.SetFloat(name, _animParam[j].defaultFloat);
-                    break;
-                case (1):
-                    if (_animParam[j].defaultBool == 1)
-                        _enemyAnimator.animator.SetBool(name, true);
-                    else
-                        _enemyAnimator.animator.SetBool(name, false);
-                    break;
-                case (2):
-                    if (_animParam[j].defaultTrigger == 1)
-                        _enemyAnimator.animator.SetTrigger(name);
-                    break;
-                case (3):
-                    _enemyAnimator.animator.SetInteger(name, _animParam[j].defaultInt);
-                    break;
-            }
-        }
-    }
-
-    private ushort currentAttack = 0;
-    private Vector3 currentWarriorPosition;
-    private Vector3 currentWarriorRotation;
-    private void Update()
-    {
-        if (UDPState == SupportClass.gameState.clone)
-        {
-
-            transform.position = Vector3.LerpUnclamped(transform.position, currentWarriorPosition, 15 * Time.deltaTime);
-
-            Quaternion tr = Quaternion.Euler(currentWarriorRotation);
-            transform.rotation = Quaternion.LerpUnclamped(transform.rotation, tr, 15 * Time.deltaTime);
-
-            if (currentWeapon != null && currentAttack == 1)
-                currentWeapon.Fire();
-        }
-    }
-   
 
     public void CreateItem(Vector3 positionItem, Quaternion rotationItem)
     {

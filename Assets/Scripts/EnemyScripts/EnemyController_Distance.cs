@@ -342,29 +342,13 @@ public class EnemyController_Distance : EnemyBase
 
     private void OnEnable()
     {
-        if (UDPState == SupportClass.gameState.server)
             Init();
-        else
-        {
-            if (GetComponent<NavMeshAgent>()) GetComponent<NavMeshAgent>().enabled = false;
-            inDamageModule = GetComponent<InDamageModule>();
-            inDamageModule.Init(UDPState);
-            inDamageModule.ReloadParam();
-        }
     }
     private void Update()
     {
-        //UpdateUIEnemy();
-
-        if (UDPState == SupportClass.gameState.server)
-        {
-            SetState();
-        }
+        SetState();
     }
 
-    /// <summary>
-    /// Init
-    /// </summary>
     private void Init()
     {
         refTimerSelectTargetCoroutine = null;
@@ -455,8 +439,6 @@ public class EnemyController_Distance : EnemyBase
     /// </summary>
     private void Idle()
     {
-        w_attack = 0;
-
         if (refTimerSelectTargetCoroutine == null)
         {
             refTimerSelectTargetCoroutine = StartCoroutine(TimerSelectTarget());
@@ -485,8 +467,6 @@ public class EnemyController_Distance : EnemyBase
     /// </summary>
     private void Patrol()
     {
-        w_attack = 0;
-
         isAggression = aggression;
 
         if (enemyAnimator.animator.GetLayerWeight(1) != 0)
@@ -538,8 +518,6 @@ public class EnemyController_Distance : EnemyBase
     /// </summary>
     private void Follow()
     {
-        w_attack = 0;
-
         if (currentTargetPlayer == null)
         {
             stateEnemy = StateEnemy.idle;
@@ -591,8 +569,6 @@ public class EnemyController_Distance : EnemyBase
     /// </summary>
     private void Attack()
     {
-        w_attack = 0;
-
         if (refTimerSelectTargetCoroutine != null)
         {
             StopCoroutine(refTimerSelectTargetCoroutine);
@@ -670,7 +646,6 @@ public class EnemyController_Distance : EnemyBase
 
             if (refTimerAttackCoroutine == null)
             {
-                w_attack = 1;
                 navMeshTarget = currentTargetPlayer.position;
                 speedAttack = attackEnemy.UpdateAttack(distToEnemy);                          // �����
                 refTimerAttackCoroutine = StartCoroutine(TimerAttack(speedAttack));
@@ -692,8 +667,6 @@ public class EnemyController_Distance : EnemyBase
     /// </summary>
     private void Death()
     {
-        w_attack = 0;
-
         if (enemyAnimator.animator.GetLayerWeight(1) != 0)
             enemyAnimator.SetAnimatorLayerWeight(1, 0);
 
@@ -731,8 +704,6 @@ public class EnemyController_Distance : EnemyBase
     /// </summary>
     private void Retreat()
     {
-        w_attack = 0;
-
         if (currentSpeed != speedRun)
         {
             currentLerpSpeed = speedRun;
@@ -782,25 +753,14 @@ public class EnemyController_Distance : EnemyBase
     /// <param name="maxDistanceVisibleEnemy"></param>
     private IEnumerator CheckAllEnemy(float maxDistanceVisibleEnemy)
     {
-        if (RPCController.Instance)
+        if (PlayerParameters.Instance) 
         {
-            for (int i = 0; i < RPCController.Instance.activePlayerAtScene.Count; i++)
-            {
-                if (Vector3.Distance(RPCController.Instance.activePlayerAtScene[i].transform.position, transform.position) < maxDistanceVisibleEnemy)
-                {
-                    PlayerController playerController;
-                    RPCController.Instance.activePlayerAtScene[i].TryGetComponent(out playerController);
+            PlayerController playerController = PlayerParameters.Instance.GetPlayerController();
 
+            if (Vector3.Distance(playerController.transform.position, transform.position) < maxDistanceVisibleEnemy)
                     if (playerController && playerController.gameIsPlayed)
-                    {
                         if (refTimerCheckAllEnemyCoroutine == null)
-                        {
-                            refTimerCheckAllEnemyCoroutine = StartCoroutine(TimerCheckAllEnemy(RPCController.Instance.activePlayerAtScene[i].transform));
-                            break;
-                        }
-                    }
-                }
-            }
+                            refTimerCheckAllEnemyCoroutine = StartCoroutine(TimerCheckAllEnemy(playerController.transform));
         }
 
         yield return new WaitForSeconds(1);

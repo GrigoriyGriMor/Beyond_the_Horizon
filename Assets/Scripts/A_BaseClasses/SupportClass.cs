@@ -9,7 +9,6 @@ public class SupportClass
 {
     public enum PlayerStateMode { Idle, Combat, Sprint }
     public enum ItemType { weapon, skin, coins, otherItem };
-    public enum gameState { server, client, clone, test }
 
     public enum windows { logIn, registration, selectServer, selectCharacter, createCharacter }
 

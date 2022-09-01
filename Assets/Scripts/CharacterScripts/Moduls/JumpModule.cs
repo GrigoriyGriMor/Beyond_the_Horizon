@@ -25,63 +25,52 @@ public class JumpModule : CharacterBase {
             //IDLE
             case SupportClass.PlayerStateMode.Idle:
                 playerAnim.SetTrigger(jumpIdleATN);
-               // _player.SetNewTrigger(jumpIdleATN);
 
-                if (state != SupportClass.gameState.clone) {
-                    if (moveAxis.x > 0.05f || moveAxis.x < -0.05f || moveAxis.y < -0.05f || moveAxis.y > 0.05f) {
-                        _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
-                        _rb.AddForce(visual.transform.forward * (JumpForce / 5f), ForceMode.Impulse);//some impuls forward
-                    }
-                    else {
-                        yield return new WaitForSeconds(waitTimeAboutJump);
-                        _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
-                    }
+                if (moveAxis.x > 0.05f || moveAxis.x < -0.05f || moveAxis.y < -0.05f || moveAxis.y > 0.05f) {
+                    _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
+                    _rb.AddForce(visual.transform.forward * (JumpForce / 5f), ForceMode.Impulse);//some impuls forward
+                }
+                else {
+                    yield return new WaitForSeconds(waitTimeAboutJump);
+                    _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
                 }
                 break;
             //COMBAT
             case SupportClass.PlayerStateMode.Combat:
                 playerAnim.SetTrigger(jumpIdleATN);
-               // _player.SetNewTrigger(jumpIdleATN);
 
-                if (state != SupportClass.gameState.clone) {
-                    if (moveAxis.x > 0.05f) {
+                if (moveAxis.x > 0.05f) {
+                    _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
+                    _rb.AddForce(visual.transform.forward * (JumpForce / 5f), ForceMode.Impulse);//some impuls forward
+                }
+                else {
+                    if (moveAxis.x < -0.05f) {
                         _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
-                        _rb.AddForce(visual.transform.forward * (JumpForce / 5f), ForceMode.Impulse);//some impuls forward
+                        _rb.AddForce(visual.transform.forward * (-JumpForce / 5f), ForceMode.Impulse);//some impuls forward
                     }
                     else {
-                        if (moveAxis.x < -0.05f) {
+                        if (moveAxis.y > 0.05f) {
                             _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
-                            _rb.AddForce(visual.transform.forward * (-JumpForce / 5f), ForceMode.Impulse);//some impuls forward
+                            _rb.AddForce(visual.transform.right * (JumpForce / 5f), ForceMode.Impulse);//some impuls forward
                         }
                         else {
-                            if (moveAxis.y > 0.05f) {
+                            if (moveAxis.y < -0.05f) {
                                 _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
-                                _rb.AddForce(visual.transform.right * (JumpForce / 5f), ForceMode.Impulse);//some impuls forward
+                                _rb.AddForce(visual.transform.right * (-JumpForce / 5f), ForceMode.Impulse);//some impuls forward
                             }
-                            else {
-                                if (moveAxis.y < -0.05f) {
-                                    _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
-                                    _rb.AddForce(visual.transform.right * (-JumpForce / 5f), ForceMode.Impulse);//some impuls forward
-                                }
-                                else
-                                    _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
-                            }
+                            else
+                                _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
                         }
                     }
                 }
                 break;
             //SPRINT
             case SupportClass.PlayerStateMode.Sprint:
-                if (moveAxis.x > 0.05f || moveAxis.x < -0.05f || moveAxis.y < -0.05f || moveAxis.y > 0.05f) 
-                {
-                    if (state != SupportClass.gameState.clone) {
-                        _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
-                        _rb.AddForce(visual.transform.forward * (JumpForce / 5f), ForceMode.Impulse);//some impuls forward
-                    }
+                if (moveAxis.x > 0.05f || moveAxis.x < -0.05f || moveAxis.y < -0.05f || moveAxis.y > 0.05f) {
+                    _rb.AddForce(visual.transform.up * JumpForce, ForceMode.Impulse);//up
+                    _rb.AddForce(visual.transform.forward * (JumpForce / 5f), ForceMode.Impulse);//some impuls forward
 
                     playerAnim.SetTrigger(jumpIdleATN);
-                   // _player.SetNewTrigger(jumpIdleATN);
-
                 }
                 break;
         }

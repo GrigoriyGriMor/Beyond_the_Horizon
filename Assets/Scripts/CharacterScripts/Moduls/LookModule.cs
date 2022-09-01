@@ -55,20 +55,8 @@ public class LookModule : CharacterBase
         factVerticalRotateSpeed = verticalRotateSpeed;
     }
 
-    private void Update() {
-        if (state == SupportClass.gameState.client || state == SupportClass.gameState.clone) {
-            Quaternion camEuler = Quaternion.Euler(_rotateCamEuler);
-            rotateCameraCenter.rotation = Quaternion.Lerp(rotateCameraCenter.rotation, camEuler, factHorizontalRotateSpeed * Time.deltaTime);
-
-            Quaternion aimEuler = Quaternion.Euler(_rotateAIMEuler);
-            rotateAIMyCenter.rotation = Quaternion.Lerp(rotateAIMyCenter.rotation, aimEuler, factHorizontalRotateSpeed * Time.deltaTime);
-            return;
-        }
-    }
-
     //функция осматривания вокруг персонажа (при нажатой "C")
-    public void CameraRotate(Vector2 mousePos, bool moveForward = false)
-    {
+    public void CameraRotate(Vector2 mousePos, bool moveForward = false) {
         yRotate = yRotateCamera;
 
         float xAxis = mousePos.x * factHorizontalRotateSpeed * Time.deltaTime;
@@ -79,22 +67,9 @@ public class LookModule : CharacterBase
 
         rotateCameraCenter.transform.localRotation = Quaternion.Euler(yRotate, rotateCameraCenter.transform.localEulerAngles.y + xAxis, rotateCameraCenter.transform.localEulerAngles.z);
 
-        if (moveForward)
-        {
-           /* Quaternion _euler = Quaternion.Euler(visual.transform.localEulerAngles.x,
-                rotateCameraCenter.transform.eulerAngles.y, visual.transform.localEulerAngles.z);
-            Quaternion _euler1 = Quaternion.Euler(rotateCameraCenter.transform.eulerAngles.x,
-                visual.transform.localEulerAngles.y, rotateCameraCenter.transform.eulerAngles.z);
-
-            if (Mathf.Abs(_euler1.y - _euler.y) * 100 > 50) {*/
-                visual.transform.rotation = Quaternion.Euler(visual.transform.eulerAngles.x, rotateCameraCenter.transform.eulerAngles.y, visual.transform.eulerAngles.z);
-                rotateCameraCenter.transform.localRotation = Quaternion.Euler(yRotate, 0, 0);
-           /* }
-            else {
-                visual.transform.rotation = Quaternion.Lerp(visual.transform.rotation, _euler, 30 * Time.deltaTime);
-                //после того как мы поворачиваем визуал, камера поворачивается вместе с ним и ее нужно вернуть обратно
-                rotateCameraCenter.transform.rotation = Quaternion.Lerp(rotateCameraCenter.transform.rotation, _euler1, 20 * Time.deltaTime);//Quaternion.Euler(yRotate, 0, 0);
-            }*/
+        if (moveForward) {
+            visual.transform.rotation = Quaternion.Euler(visual.transform.eulerAngles.x, rotateCameraCenter.transform.eulerAngles.y, visual.transform.eulerAngles.z);
+            rotateCameraCenter.transform.localRotation = Quaternion.Euler(yRotate, 0, 0);
 
             //если персонаж во время бега поворачивает мышкой, то немного наклоняем его с помощью аниматора
             playerAnim.SetFloat(RunRotateFloat, Mathf.LerpUnclamped(playerAnim.GetFloat(RunRotateFloat), xAxis, 2.5f * Time.deltaTime));
@@ -110,54 +85,6 @@ public class LookModule : CharacterBase
     //функция привцеливания в точку и поворот корпуса
     public void CameraAIMRotate(Vector2 mousePos, bool moveForward = false)
     {
-        if (state == SupportClass.gameState.client || state == SupportClass.gameState.clone) {
-
-            Quaternion camEuler = Quaternion.Euler(_rotateCamEuler);
-            rotateCameraCenter.rotation = Quaternion.LerpUnclamped(rotateCameraCenter.rotation, camEuler, factHorizontalRotateSpeed * Time.deltaTime);
-
-            Quaternion aimEuler = Quaternion.Euler(_rotateAIMEuler);
-            rotateAIMyCenter.rotation = Quaternion.LerpUnclamped(rotateAIMyCenter.rotation, aimEuler, factHorizontalRotateSpeed * Time.deltaTime);
-
-            Ray ray1 = _personCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-
-            if (Physics.Raycast(ray1, out RaycastHit hit2, maxDistance) &&
-                (Vector3.Distance(_personCamera.transform.position, hit2.point) > minDistance && Vector3.Distance(_personCamera.transform.position, hit2.point) < maxDistance))
-                TargetPoint.position = Vector3.LerpUnclamped(TargetPoint.position, hit2.point, guidanceSpeed * Time.deltaTime);
-            else {
-                Vector3 newPos = new Vector3(_personCamera.transform.localPosition.x, _personCamera.transform.localPosition.y, _personCamera.transform.localPosition.z + maxDistance);
-                TargetPoint.localPosition = Vector3.LerpUnclamped(TargetPoint.localPosition, newPos, guidanceSpeed * Time.deltaTime);
-            }
-
-            float xAxis1 = mousePos.x * horizontalRotateSpeed * Time.deltaTime;
-
-            if (!moveForward)//если двигаемся (WASD)
-            {
-                if (rotateAIMyCenter.transform.localEulerAngles.y >= (360 + minHorizontAngle) || rotateAIMyCenter.transform.localEulerAngles.y <= maxHorizontAngle) {
-                    playerAnim.SetFloat("RunRotate", 0);
-                    playerAnim.SetBool(leftStepTrigger, false);
-                    playerAnim.SetBool(rightStepTrigger, false);
-                }
-                else {
-                    if (xAxis1 < 0) {
-                        playerAnim.SetBool(leftStepTrigger, true);
-                        playerAnim.SetFloat("RunRotate", -1);
-
-                        rotateCameraCenter.eulerAngles = _rotateCamEuler;
-                        rotateAIMyCenter.eulerAngles = _rotateAIMEuler;
-                    }
-                    else {
-                        playerAnim.SetBool(rightStepTrigger, true);
-                        playerAnim.SetFloat("RunRotate", 1);
-
-                        rotateCameraCenter.eulerAngles = _rotateCamEuler;
-                        rotateAIMyCenter.eulerAngles = _rotateAIMEuler;
-                    }
-                }
-            }
-
-            return;
-        }
-
         Ray ray = _personCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
 
         if (Physics.Raycast(ray, out RaycastHit hit, maxDistance) &&
@@ -226,26 +153,6 @@ public class LookModule : CharacterBase
         }
 
         yRotateCamera = yRotate;
-    }
-
-    public Vector3 GetCameraRotate() {
-        return rotateCameraCenter.eulerAngles;
-    }
-
-    public Vector3 GetAimRotate() {
-        return rotateAIMyCenter.eulerAngles;
-    }
-
-    private Vector3 _rotateCamEuler;
-    private Vector3 _rotateAIMEuler;
-    public void SetCameraRotate(Vector3 camRotate) {
-        //  rotateCameraCenter.eulerAngles = camRotate;
-        _rotateCamEuler = camRotate;
-    }
-
-    public void SetAimRotate(Vector3 aimRotate) {
-        //  rotateAIMyCenter.eulerAngles = aimRotate;
-        _rotateAIMEuler = aimRotate;
     }
 
     private float targetPos;

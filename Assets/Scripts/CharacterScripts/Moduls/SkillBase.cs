@@ -8,7 +8,6 @@ public abstract class SkillBase : MonoBehaviour
     public SkillParams skillParam;
     [HideInInspector] public SkillsModule module;
 
-    [HideInInspector] public SupportClass.gameState state;
     [HideInInspector] public GameObject visual;
     [HideInInspector] public Camera mainCamera;
     [HideInInspector] public Rigidbody _rb;
@@ -22,8 +21,7 @@ public abstract class SkillBase : MonoBehaviour
 
     private bool moduleActivate = false;
 
-    public SkillParams Init(SupportClass.gameState _state, GameObject _visual, Rigidbody rb, Animator _playerAnim, SkillsModule _module, Transform _spineBone = null, Camera _mainCamera = null, PlayerController player = null) {
-        state = _state;
+    public SkillParams Init(GameObject _visual, Rigidbody rb, Animator _playerAnim, SkillsModule _module, Transform _spineBone = null, Camera _mainCamera = null, PlayerController player = null) {
         visual = _visual;
         mainCamera = _mainCamera;
         _rb = rb;

@@ -193,10 +193,8 @@ public class WeaponModule : CharacterBase
     private IEnumerator GunShot() {
         playerAnim.SetTrigger("OneShot");
         mainCamera.transform.localPosition = new Vector3(mainCamera.transform.localPosition.x, mainCamera.transform.localPosition.y, mainCamera.transform.localPosition.z - 0.05f);
-       // otherVignette.SetActive(true);
 
         yield return new WaitForEndOfFrame();
-       // otherVignette.SetActive(false);
     }
 
     [HideInInspector] public bool reload = false;

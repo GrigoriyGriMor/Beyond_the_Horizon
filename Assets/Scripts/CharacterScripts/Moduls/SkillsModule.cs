@@ -10,7 +10,7 @@ public class SkillsModule : CharacterBase
         
     private void Start() {
         for (int i = 0; i < skills.Count; i++) {
-            SkillParams param = skills[i].skill.Init(state, visual, _rb, playerAnim, this, null, mainCamera, _player);
+            SkillParams param = skills[i].skill.Init(visual, _rb, playerAnim, this, null, mainCamera, _player);
             skills[i].skillImages.sprite = param.skillImage;
             skills[i].coolDown = param.skillCoolDown;
 

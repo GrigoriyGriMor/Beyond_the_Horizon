@@ -6,8 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class InDamageModule : CharacterBase
-{
+public class InDamageModule : CharacterBase {
     [Header("Heal Point")]
     [SerializeField] private float currentHeal = 100.0f;
     [SerializeField] private float maxHeal = 100.0f;
@@ -40,8 +39,7 @@ public class InDamageModule : CharacterBase
     [SerializeField] private float healRegenTime = 5.0f;
     [SerializeField] private ParticleSystem healParticle;
 
-    private void Start()
-    {
+    private void Start() {
         if (damageVignette) {
             damageVignette.profile.TryGet(out bloom);
             bloom.intensity.value = 0;
@@ -61,8 +59,7 @@ public class InDamageModule : CharacterBase
     }
 
     bool gameIsPlayer = false;
-    private IEnumerator WaitStart()
-    {
+    private IEnumerator WaitStart() {
         yield return new WaitForSeconds(0.5f);
 
         gameIsPlayer = true;
@@ -70,36 +67,32 @@ public class InDamageModule : CharacterBase
     }
 
     float lastShield;
-    public void InDamage(float damage, RaycastHit hit, Transform objectDamage = null)
-    {
+    public void InDamage(float damage, RaycastHit hit, Transform objectDamage = null) {
         if (currentHeal <= 0) return;
         if (objectDamage) this.objectDamage = objectDamage;     // Solo
-        if (state != SupportClass.gameState.client && state != SupportClass.gameState.clone)
-        {
-            lastShield = currentShield;
 
-            if (currentShield <= 0)
-                currentHeal -= damage;
-            else
-            {
-                currentShield -= damage * 0.75f;
-                currentHeal -= damage * 0.25f;
-            }
+        lastShield = currentShield;
 
-            if (damageVignette) {
-                float pecent = (healPointBar.value * 100) / maxHeal;
-                bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
-            }
-
-            if (healPointBar != null) healPointBar.value = currentHeal;
-            if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
-
-            if (shieldPointBar != null) shieldPointBar.value = currentShield;
-            if (shieldText) shieldText.text = Mathf.CeilToInt(Mathf.Clamp(currentShield, 0, maxShield)).ToString();
-
-            if (currentHeal <= 0)
-                Deach();
+        if (currentShield <= 0)
+            currentHeal -= damage;
+        else {
+            currentShield -= damage * 0.75f;
+            currentHeal -= damage * 0.25f;
         }
+
+        if (damageVignette) {
+            float pecent = (healPointBar.value * 100) / maxHeal;
+            bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
+        }
+
+        if (healPointBar != null) healPointBar.value = currentHeal;
+        if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
+
+        if (shieldPointBar != null) shieldPointBar.value = currentShield;
+        if (shieldText) shieldText.text = Mathf.CeilToInt(Mathf.Clamp(currentShield, 0, maxShield)).ToString();
+
+        if (currentHeal <= 0)
+            Deach();
 
 
         if (hit.collider != null) {
@@ -107,12 +100,13 @@ public class InDamageModule : CharacterBase
                 if (inDamageShieldParticle != null) {
                     inDamageShieldParticle.transform.position = hit.point;
                     inDamageShieldParticle.Play();
-                }            }
+                }
+            }
             else {
                 if (inDamageParticle != null) {
                     inDamageParticle.transform.position = hit.point;
                     inDamageParticle.Play();
-                }     
+                }
             }
         }
 
@@ -123,55 +117,14 @@ public class InDamageModule : CharacterBase
     public void InHealing(float healPoint, bool shield = false) {
         if (currentHeal <= 0) return;
 
-        if (state != SupportClass.gameState.client && state != SupportClass.gameState.clone) {
-            if (shield) {
-                currentShield = Mathf.Clamp(currentShield + healPoint, 0, maxShield);
+        if (shield) {
+            currentShield = Mathf.Clamp(currentShield + healPoint, 0, maxShield);
 
-                if (shieldPointBar != null) shieldPointBar.value = currentShield;
-                if (shieldText) shieldText.text = Mathf.CeilToInt(Mathf.Clamp(currentShield, 0, maxShield)).ToString();
-            }
-            else {
-                currentHeal = Mathf.Clamp(currentHeal + healPoint, 0, maxHeal);
-
-                if (damageVignette) {
-                    float pecent = (healPointBar.value * 100) / maxHeal;
-                    bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
-                }
-
-                if (healPointBar != null) healPointBar.value = currentHeal;
-                if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
-            }
+            if (shieldPointBar != null) shieldPointBar.value = currentShield;
+            if (shieldText) shieldText.text = Mathf.CeilToInt(Mathf.Clamp(currentShield, 0, maxShield)).ToString();
         }
-    }
-
-    private IEnumerator HealRegeniration() {
-        yield return new WaitForSeconds(healRegenTime);
-
-        if (currentHeal > 0 && currentHeal != maxHeal) {
-            if (state != SupportClass.gameState.client && state != SupportClass.gameState.clone) {
-                currentHeal = Mathf.Clamp((currentHeal + healRegen), 0, maxHeal);
-                if (healParticle) healParticle.Play();
-
-                if (healPointBar != null) healPointBar.value = currentHeal;
-                if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
-
-                if (damageVignette) {
-                    float pecent = (healPointBar.value * 100) / maxHeal;
-                    bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
-                }
-            }
-        }
-
-        StartCoroutine(HealRegeniration());
-    }
-
-    public void InDamageAfterFall(float damage)
-    {
-        if (currentHeal <= 0) return;
-
-        if (state != SupportClass.gameState.client && state != SupportClass.gameState.clone)
-        {
-            currentHeal -= damage;
+        else {
+            currentHeal = Mathf.Clamp(currentHeal + healPoint, 0, maxHeal);
 
             if (damageVignette) {
                 float pecent = (healPointBar.value * 100) / maxHeal;
@@ -180,30 +133,59 @@ public class InDamageModule : CharacterBase
 
             if (healPointBar != null) healPointBar.value = currentHeal;
             if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
-
-            if (currentHeal <= 0)
-                Deach();
         }
     }
 
-    private void Deach()
-    {
+    private IEnumerator HealRegeniration() {
+        yield return new WaitForSeconds(healRegenTime);
+
+        if (currentHeal > 0 && currentHeal != maxHeal) {
+            currentHeal = Mathf.Clamp((currentHeal + healRegen), 0, maxHeal);
+            if (healParticle) healParticle.Play();
+
+            if (healPointBar != null) healPointBar.value = currentHeal;
+            if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
+
+            if (damageVignette) {
+                float pecent = (healPointBar.value * 100) / maxHeal;
+                bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
+            }
+        }
+
+        StartCoroutine(HealRegeniration());
+    }
+
+    public void InDamageAfterFall(float damage) {
+        if (currentHeal <= 0) return;
+
+        currentHeal -= damage;
+
+        if (damageVignette) {
+            float pecent = (healPointBar.value * 100) / maxHeal;
+            bloom.intensity.value = maxVegnetteValue - (maxVegnetteValue * (pecent / 100));
+        }
+
+        if (healPointBar != null) healPointBar.value = currentHeal;
+        if (healText) healText.text = Mathf.CeilToInt(Mathf.Clamp(currentHeal, 0, maxHeal)).ToString();
+
+        if (currentHeal <= 0)
+            Deach();
+    }
+
+    private void Deach() {
         if (damageVignette) bloom.intensity.value = 0.75f;
 
         deach.Invoke();
-        if (playerAnim)
-        {
+        if (playerAnim) {
             playerAnim.SetTrigger("Die");
         }
     }
 
-    public float GetHeal()
-    {
+    public float GetHeal() {
         return currentHeal;
     }
 
-    public void SetHeal(float newHP)
-    {
+    public void SetHeal(float newHP) {
         if (!gameIsPlayer || currentHeal <= 0) return;
 
         currentHeal = newHP;
@@ -219,8 +201,7 @@ public class InDamageModule : CharacterBase
             Deach();
     }
 
-    public void SetShield(float newShield)
-    {
+    public void SetShield(float newShield) {
         if (!gameIsPlayer || currentHeal <= 0) return;
 
         currentShield = newShield;
@@ -228,14 +209,12 @@ public class InDamageModule : CharacterBase
         if (shieldText) shieldText.text = Mathf.CeilToInt(Mathf.Clamp(currentShield, 0, maxShield)).ToString();
     }
 
-    public float GetShield()
-    {
+    public float GetShield() {
         return currentShield;
     }
 
-    public void ReloadParam()
-    {
-        if (damageVignette) 
+    public void ReloadParam() {
+        if (damageVignette)
             bloom.intensity.value = 0;
 
         currentHeal = maxHeal;
@@ -243,15 +222,10 @@ public class InDamageModule : CharacterBase
 
         SetHeal(maxHeal);
         SetShield(maxShield);
-
-        //if (healPointBar != null) startHealVisual = healPointBar.rect.width;
-        //if (shieldPointBar != null) startShieldVisual = shieldPointBar.rect.width;
     }
 
     /// Возвращает Обьект который нанес Урон
-    /// SOLO
-    public Transform GetTarget()
-    {
+    public Transform GetTarget() {
         return objectDamage;
     }
 }

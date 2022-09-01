@@ -44,12 +44,6 @@ public class ActivityButtonNameRequest : MonoBehaviour
                 case Keys.aiming:
                     buttonName.text = player.aiming.ToString();
                     break;
-                case Keys.useObject:
-                    buttonName.text = player.uesObject.ToString();
-                    break;
-                case Keys.useGrenade:
-                    buttonName.text = player.useGrenade.ToString();
-                    break;
             }
         }
     }

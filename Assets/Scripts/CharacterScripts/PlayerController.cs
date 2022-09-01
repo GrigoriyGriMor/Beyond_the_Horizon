@@ -5,11 +5,6 @@ using UnityEngine.Animations.Rigging;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
-    [Header("Сервер/Клиент")]
-    public SupportClass.gameState UDPStatus = SupportClass.gameState.client;
-
-    public Text playerName;
-
     private SupportClass.PlayerStateMode mode = SupportClass.PlayerStateMode.Idle;
     private WeaponController UsedWeapon;
 
@@ -31,17 +26,12 @@ public class PlayerController : MonoBehaviour {
 
     [SerializeField] private InventoryController inventoryModule;
 
-    [SerializeField] private ChatSystem chatSystem;
     [SerializeField] private QuickMenuSystem quickMenuSystem;
-
-    [Header("Brand Shop")]
-    [SerializeField] private BrandStoreSystem brandStoreSystem;
 
     [Header("Info Use Object")]
     [SerializeField] private GameObject useObjectPanel;
     [SerializeField] private Text textWhatDo;
     [SerializeField] private Text textObjectName;
-
 
     [Header("Mouse Cursor Settings")]
     public bool cursorLocked = true;
@@ -49,7 +39,6 @@ public class PlayerController : MonoBehaviour {
     [Header("Other settings")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private bool isGrounded = false;
-    //[SerializeField] private int sprintLayerIndex = 2;
 
     [HideInInspector] public bool gameIsPlayed = false;
     private Vector2 moveAxis;
@@ -72,8 +61,6 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private float aimingCameraView = 25;
     private float cameraView;
 
-    public ushort playerID;
-
     [HideInInspector] public InputPlayerManager inputModule;
 
     [Header("Respawn Particle")]
@@ -90,14 +77,14 @@ public class PlayerController : MonoBehaviour {
 
         inputModule = GetComponent<InputPlayerManager>();
 
-        if (moveController.enabled) moveController.Init(UDPStatus, visual, _rb, playerAnim, spineBone, mainCamera);
-        if (lookController.enabled) lookController.Init(UDPStatus, visual, _rb, playerAnim, spineBone, mainCamera);
-        if (jumpModules.enabled) jumpModules.Init(UDPStatus, visual, _rb, playerAnim, spineBone, mainCamera, this);
-        if (attackModule.enabled) attackModule.Init(UDPStatus, visual, _rb, playerAnim, spineBone, mainCamera);
-        if (weaponModule != null && weaponModule.enabled) weaponModule.Init(UDPStatus, visual, _rb, playerAnim, spineBone, mainCamera, this);
-        if (inDamageModule.enabled) inDamageModule.Init(UDPStatus, visual, _rb, playerAnim);
-        if (inventoryModule != null && inventoryModule.enabled) inventoryModule.Init(UDPStatus, this, weaponModule);
-        if (skillsModule != null && skillsModule.enabled) skillsModule.Init(UDPStatus, visual, _rb, playerAnim, spineBone, mainCamera, this);
+        if (moveController.enabled) moveController.Init(visual, _rb, playerAnim, spineBone, mainCamera);
+        if (lookController.enabled) lookController.Init(visual, _rb, playerAnim, spineBone, mainCamera);
+        if (jumpModules.enabled) jumpModules.Init(visual, _rb, playerAnim, spineBone, mainCamera, this);
+        if (attackModule.enabled) attackModule.Init(visual, _rb, playerAnim, spineBone, mainCamera);
+        if (weaponModule != null && weaponModule.enabled) weaponModule.Init(visual, _rb, playerAnim, spineBone, mainCamera, this);
+        if (inDamageModule.enabled) inDamageModule.Init(visual, _rb, playerAnim);
+        if (inventoryModule != null && inventoryModule.enabled) inventoryModule.Init(this, weaponModule);
+        if (skillsModule != null && skillsModule.enabled) skillsModule.Init(visual, _rb, playerAnim, spineBone, mainCamera, this);
         if (GetComponent<ChecknteractbleObj>()) GetComponent<ChecknteractbleObj>().Init(mainCamera);
 
         cameraView = mainCamera.fieldOfView;
@@ -106,13 +93,12 @@ public class PlayerController : MonoBehaviour {
 
         SetNewFixMode(SupportClass.PlayerStateMode.Idle);
 
-        if (UDPStatus != SupportClass.gameState.client) StartCoroutine(StartGame());
+        StartCoroutine(StartGame());
 
         inDamageModule.deach.AddListener(() => StartCoroutine(Death()));
     }
 
     private void Start() {
-        //if (PlayerParameters.Instance && (UDPStatus == SupportClass.gameState.client || UDPStatus == SupportClass.gameState.test)) PlayerParameters.Instance.SetPlayerController(this);
         StartCoroutine(SetPlayer());
     }
 
@@ -121,230 +107,24 @@ public class PlayerController : MonoBehaviour {
             yield return new WaitForFixedUpdate();
         }
 
-        if (PlayerParameters.Instance && (UDPStatus == SupportClass.gameState.client || UDPStatus == SupportClass.gameState.test)) PlayerParameters.Instance.SetPlayerController(this);
+        PlayerParameters.Instance.SetPlayerController(this);
     }
 
     public void StartThisGame() {
         StartCoroutine(StartGame());
     }
 
-    private Vector3 currentPlayerPosition;
-    private Vector3 currentPlayerRotation;
-    private Vector3 currentPlayerVisualRotation;
-
-    public void SetServerParamSinc(Vector3 playerPos, Vector3 playerRotate, Vector3 playerVisualRotate,
-        Vector3 cameraRotate, Vector3 aimRotate, Vector3 velocity, float healPoint,
-        float shieldPoint, int usedGunN, byte _mode) {
-
-        currentPlayerPosition = playerPos;
-        currentPlayerRotation = playerRotate;
-        currentPlayerVisualRotation = playerVisualRotate;
-
-        lookController.SetCameraRotate(cameraRotate);
-        lookController.SetAimRotate(aimRotate);
-
-        _rb.velocity = velocity;
-
-        inDamageModule.SetHeal(healPoint);
-        inDamageModule.SetShield(shieldPoint);
-
-        /*  switch (_mode) {
-              case 0:
-                  if (mode != SupportClass.PlayerStateMode.Idle)
-                      SetNewFixMode(SupportClass.PlayerStateMode.Idle);
-                  break;
-              case 1:
-                  if (mode != SupportClass.PlayerStateMode.Combat)
-                      SetNewFixMode(SupportClass.PlayerStateMode.Combat);
-                  break;
-              case 2:
-                  if (mode != SupportClass.PlayerStateMode.Sprint)
-                      SetNewFixMode(SupportClass.PlayerStateMode.Sprint);
-                  break;
-          }*/
-
-        if (!oneMoment && weaponModule.GetUsedGun() != usedGunN) {
-            UseWeapon(usedGunN);
-            oneMoment = true;
-        }
-    }
-    bool oneMoment = false;
-
-    public void SetServerAnimatorParametrs(float[] animLayerWeight, AnimatorParamData[] animParam) {
-
-        for (int i = 0; i < animLayerWeight.Length; i++)
-            playerAnim.SetLayerWeight(i, animLayerWeight[i]);
-
-        for (int j = 0; j < animParam.Length; j++) {
-            string name = playerAnim.GetParameter(animParam[j].indexParam).name;
-            switch (animParam[j].type) {
-                case (0):
-                    playerAnim.SetFloat(name, animParam[j].defaultFloat);
-                    break;
-                case (1):
-                    if (animParam[j].defaultBool == 1)
-                        playerAnim.SetBool(name, true);
-                    else
-                        playerAnim.SetBool(name, false);
-                    break;
-                case (2):
-                    //   playerAnim.SetTrigger(name);
-                    break;
-                case (3):
-                    playerAnim.SetInteger(name, animParam[j].defaultInt);
-                    break;
-            }
-        }
-    }
 
     [HideInInspector] public ushort body_type = 2;
 
-    public void InitPlayer(string _playerName, int _id = -1, string session = "") {
-        if (_id != -1) playerID = (ushort)_id;
-        if (playerName != null) playerName.text = _playerName;
-
-        if (chatSystem != null) chatSystem.Init(_playerName, _id, session);
-
-        if (brandStoreSystem != null) brandStoreSystem.Init(_id, session);
-    }
-
-    public void InitPlayer(string _playerName, ushort _body_type = 0) {
-        body_type = _body_type;
-        if (playerName != null) playerName.text = _playerName;
-    }
-
-    public void InitPlayer(string _playerName) {
-        if (playerName != null) playerName.text = _playerName;
-    }
-
-    public PlayerCoreData GetPlayerData()
-    {
-        PlayerCoreData newData = new PlayerCoreData();
-
-        newData.playerPosX = transform.position.x;
-        newData.playerPosY = transform.position.y;
-        newData.playerPosZ = transform.position.z;
-
-        newData.playerRotateX = transform.eulerAngles.x;
-        newData.playerRotateY = transform.eulerAngles.y;
-        newData.playerRotateZ = transform.eulerAngles.z;
-
-        newData.playerVisualRotateX = playerAnim.transform.eulerAngles.x;
-        newData.playerVisualRotateY = playerAnim.transform.eulerAngles.y;
-        newData.playerVisualRotateZ = playerAnim.transform.eulerAngles.z;
-
-        Vector3 camRotate = lookController.GetCameraRotate();
-        newData.cameraRotateX = camRotate.x;
-        newData.cameraRotateY = camRotate.y;
-        newData.cameraRotateZ = camRotate.z;
-
-        Vector3 aimRotate = lookController.GetAimRotate();
-        newData.aimRotateX = aimRotate.x;
-        newData.aimRotateY = aimRotate.y;
-        newData.aimRotateZ = aimRotate.z;
-
-        newData.velocityX = _rb.velocity.x;
-        newData.velocityY = _rb.velocity.y;
-        newData.velocityZ = _rb.velocity.z;
-
-        newData.healPoint = inDamageModule.GetHeal();
-        newData.shieldPoint = inDamageModule.GetShield();
-
-        newData.usedGunN = weaponModule.GetUsedGunNumber();
-
-        newData.inputData = inputModule.GetCurrentButtonState();
-
-        switch (mode) {
-            case SupportClass.PlayerStateMode.Idle:
-                newData.playerState = 0;
-                break;
-            case SupportClass.PlayerStateMode.Combat:
-                newData.playerState = 1;
-                break;
-            case SupportClass.PlayerStateMode.Sprint:
-                newData.playerState = 2;
-                break;
-        }
-
-        {/*  float[] layerW = new float[3];
-          for (int i = 0; i < layerW.Length; i++)
-              layerW[i] = playerAnim.GetLayerWeight(i);
-
-          newData.animLayerWeight = layerW;
-
-          AnimatorParamData[] apd = new AnimatorParamData[20];
-          for (int i = 0; i < playerAnim.parameterCount; i++) {
-              apd[i].indexParam = (ushort)i;
-
-              switch (playerAnim.parameters[i].type) {
-                  case (AnimatorControllerParameterType.Float):
-                      apd[i].type = 0;
-                      apd[i].defaultFloat = playerAnim.GetFloat(playerAnim.parameters[i].name);
-                      break;
-                  case (AnimatorControllerParameterType.Bool):
-                      apd[i].type = 1;
-                      if (playerAnim.GetBool(playerAnim.parameters[i].name))
-                          apd[i].defaultBool = 1;
-                      else
-                          apd[i].defaultBool = 0;
-                      break;
-                  case (AnimatorControllerParameterType.Trigger):
-                      apd[i].type = 2;
-                      break;
-                  case (AnimatorControllerParameterType.Int):
-                      apd[i].type = 3;
-                      apd[i].defaultInt = playerAnim.GetInteger(playerAnim.parameters[i].name);
-                      break;
-              }
-          }
-        newData.animParam = apd;*/
-        }
-
-        return newData;
-    }
-
-
-    //for test
     private IEnumerator StartGame()
     {
         yield return new WaitForSeconds(1);
-      //  if (CoursorController.Instance) CoursorController.Instance.UI_Object_Off();
         gameIsPlayed = true;
     }
 
-    //====================================================Отправка===================================================================
-    public void SetNewTrigger(string triggerName) {
-        for (int i = 0; i < playerAnim.parameterCount; i++) {
-            if (playerAnim.parameters[i].name == triggerName)
-                triggerActive.Add(i);
-        }
-    }
-    private List<int> triggerActive = new List<int>();
-    //==============================================================================================================================
-
     private void Update() {
         if (!gameIsPlayed) return;
-        //================================================Прием====================================================================
-        /*for (int i = 0; i < playerAnim.parameterCount; i++) {
-            if (playerAnim.parameters[i].type == AnimatorControllerParameterType.Trigger) {
-                for (int j = 0; j < triggerActive.Count; j++) {
-                    if (i == triggerActive[j])
-                        triggerActive.RemoveAt(j);
-                        Debug.LogError("Trigger " + playerAnim.parameters[i].name);
-                }
-            }
-        }*/
-        //==============================================================================================================================
-
-
-        if (UDPStatus == SupportClass.gameState.client || UDPStatus == SupportClass.gameState.clone) {
-            transform.position = Vector3.Lerp(transform.position, currentPlayerPosition, 15 * Time.deltaTime);
-
-            Quaternion tr = Quaternion.Euler(currentPlayerRotation);
-            transform.rotation = Quaternion.Lerp(transform.rotation, tr, 15 * Time.deltaTime);
-            tr = Quaternion.Euler(currentPlayerVisualRotation);
-            visual.transform.rotation = Quaternion.Lerp(visual.transform.rotation, tr, 15 * Time.deltaTime);
-        }
 
         playerAnim.SetFloat("VelocityY", _rb.velocity.y);
 
@@ -417,8 +197,6 @@ public class PlayerController : MonoBehaviour {
 
     #region _Move
     public void MoveCharacter(Vector2 moveVector) {
-        if (chatIsUse) return;
-
         if (gameIsPlayed && (isGrounded && !isFlipping)) {
             moveAxis = moveVector;
             moveController.MoveAxis(moveAxis, mode, isCrouching);
@@ -432,8 +210,6 @@ public class PlayerController : MonoBehaviour {
     #region _Jump
     public void Jump()
     {
-        if (chatIsUse) return;
-
         if (isJumping || !isGrounded || isCrouching) return;
 
         StartCoroutine(JumpingReloadTime());
@@ -515,8 +291,6 @@ public class PlayerController : MonoBehaviour {
     #region Swap Weapon
     public void UseWeapon(int wNumber)
     {
-        if (chatIsUse) return;
-
         if (weaponModule != null) weaponModule.GetWeapon(wNumber);
     }
     #endregion
@@ -613,35 +387,28 @@ public class PlayerController : MonoBehaviour {
     }
     #endregion
 
-    #region Chat
-    bool chatIsUse = false;
-    public void UseChat() {
-        chatIsUse = chatSystem.UseChat();
-    }
-    #endregion
-
     #region QuickSystem
     public void UseQuickSystem() {
-        if (!chatIsUse) quickMenuSystem.UseQuickMenu();
+        quickMenuSystem.UseQuickMenu();
     }
 
     public void UseMap() {
-        if (!chatIsUse) quickMenuSystem.UseMap();
+        quickMenuSystem.UseMap();
     }
 
     public void UseMission() {
-        if (!chatIsUse) quickMenuSystem.UseMission();
+        quickMenuSystem.UseMission();
     }
     public void UseInventory() {
-        if (!chatIsUse) quickMenuSystem.UseInventory();
+        quickMenuSystem.UseInventory();
     }
 
     public void UseStore() {
-        if (!chatIsUse) quickMenuSystem.UseStore();
+        quickMenuSystem.UseStore();
     }
 
     public void UseIslandStore() {
-        if (!chatIsUse) quickMenuSystem.UseIslandStore();
+        quickMenuSystem.UseIslandStore();
     }
     #endregion
 
@@ -666,18 +433,7 @@ public class PlayerController : MonoBehaviour {
         inDamageModule.ReloadParam();
         playerAnim.SetTrigger("RepeatPlayer");
 
-        if (UDPStatus == SupportClass.gameState.server) {
-            if (SpawnerPlayer.Instance) {
-                Vector3 point = SpawnerPlayer.Instance.GetSpawnPos();
-                transform.position = new Vector3(point.x, point.y + 2, point.z);
-            }
-            else
-                transform.position = new Vector3(Random.Range(-5, 5), 10, Random.Range(-5, 5));
-
-            gameIsPlayed = true;
-        }
-        else
-            StartCoroutine(RespawnCorutine());
+        StartCoroutine(RespawnCorutine());
     }
 
     private IEnumerator RespawnCorutine() {
@@ -714,13 +470,6 @@ public class PlayerController : MonoBehaviour {
                     break;
                 case SupportClass.interactiveItemType.Other:
                     if (inventoryModule != null) inventoryModule.SetNewItem(currentInteractiveItem.GetComponent<ItemAtSceneController>().GetItemInfo());
-                    break;
-                case SupportClass.interactiveItemType.Billboard:
-                    if (brandStoreSystem != null) {
-                        BillboardInGameInfo data = currentInteractiveItem.GetComponent<BilboardController>().GetInfo();
-                        if (data.brand_name != "" || data.good_id != "")
-                            brandStoreSystem.OpenWindowsWithSelectbleParam(currentInteractiveItem.GetComponent<BilboardController>().GetInfo());
-                    }
                     break;
                 default:
                     break;

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public abstract class CharacterBase : MonoBehaviour
 {
-    //LoadSetting
-    [HideInInspector] public SupportClass.gameState state;
     [HideInInspector] public GameObject visual;
     [HideInInspector] public Camera mainCamera;
     [HideInInspector] public Rigidbody _rb;
@@ -19,9 +17,8 @@ public abstract class CharacterBase : MonoBehaviour
 
     private bool moduleActivate = false;
 
-    public void Init(SupportClass.gameState _state, GameObject _visual, Rigidbody rb, Animator _playerAnim, Transform _spineBone = null, Camera _mainCamera = null, PlayerController player = null)
+    public void Init(GameObject _visual, Rigidbody rb, Animator _playerAnim, Transform _spineBone = null, Camera _mainCamera = null, PlayerController player = null)
     {
-        state = _state;
         visual = _visual;
         mainCamera = _mainCamera;
         _rb = rb;
@@ -32,14 +29,7 @@ public abstract class CharacterBase : MonoBehaviour
         moduleActivate = true;
     }
 
-    public void Init(SupportClass.gameState _state) {
-        state = _state;
-
-        moduleActivate = true;
-    }
-
-    public void Init(SupportClass.gameState _state, PlayerController player, WeaponModule _weaponModule) {
-        state = _state;
+    public void Init(PlayerController player, WeaponModule _weaponModule) {
         _player = player;
 
         weaponModule = _weaponModule;
