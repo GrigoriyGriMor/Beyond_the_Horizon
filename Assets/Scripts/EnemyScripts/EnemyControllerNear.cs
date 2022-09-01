@@ -292,35 +292,14 @@ public class EnemyControllerNear : EnemyBase
 
     private void OnEnable()
     {
-        if (UDPState == SupportClass.gameState.server)
             Init();
-        else
-        {
-            if (GetComponent<NavMeshAgent>()) GetComponent<NavMeshAgent>().enabled = false;
-            inDamageModule = GetComponent<InDamageModule>();
-            inDamageModule.Init(UDPState);
-            inDamageModule.ReloadParam();
-        }
-        // if (refCoroutineUpdate == null) refCoroutineUpdate = StartCoroutine(CustomUpdate());
-    }
-
-    private void OnDisable()
-    {
-        //StopCoroutine(refCoroutineUpdate);
     }
 
     private void Update()
     {
-        //UpdateUIEnemy();
-        if (UDPState == SupportClass.gameState.server)
-        {
             SetState();
-        }
     }
 
-    /// <summary>
-    /// Init
-    /// </summary>
     private void Init()
     {
         refTimerSelectTargetCoroutine = null;
@@ -333,7 +312,6 @@ public class EnemyControllerNear : EnemyBase
         if (enemyAnimator != null) enemyAnimator = GetComponent<EnemyAnimator>();
         if (navMeshAgent != null) navMeshAgent = GetComponent<NavMeshAgent>();
         if (inDamageModule != null) inDamageModule = GetComponent<InDamageModule>();
-        //  enemyDeath = GetComponent<EnemyDeath>();
         if (attackEnemy != null) attackEnemy = GetComponent<AttackEnemy>();
         if (rigObject != null) rigObject = GetComponentInChildren<Rig>();
 
@@ -610,25 +588,14 @@ public class EnemyControllerNear : EnemyBase
     /// <param name="maxDistanceVisibleEnemy"></param>
     private IEnumerator CheckAllEnemy(float maxDistanceVisibleEnemy)
     {
-        if (RPCController.Instance)
+        if (PlayerParameters.Instance)
         {
-            for (int i = 0; i < RPCController.Instance.activePlayerAtScene.Count; i++)
-            {
-                if (Vector3.Distance(RPCController.Instance.activePlayerAtScene[i].transform.position, transform.position) < maxDistanceVisibleEnemy)
-                {
-                    PlayerController playerController;
-                    RPCController.Instance.activePlayerAtScene[i].TryGetComponent(out playerController);
+            PlayerController playerController = PlayerParameters.Instance.GetPlayerController();
 
-                    if (playerController && playerController.gameIsPlayed)
-                    {
-                        if (refTimerCheckAllEnemyCoroutine == null)
-                        {
-                            refTimerCheckAllEnemyCoroutine = StartCoroutine(TimerCheckAllEnemy(RPCController.Instance.activePlayerAtScene[i].transform));
-                            break;
-                        }
-                    }
-                }
-            }
+            if (Vector3.Distance(playerController.transform.position, transform.position) < maxDistanceVisibleEnemy)
+                if (playerController && playerController.gameIsPlayed)
+                    if (refTimerCheckAllEnemyCoroutine == null)
+                        refTimerCheckAllEnemyCoroutine = StartCoroutine(TimerCheckAllEnemy(playerController.transform));
         }
 
         yield return new WaitForSeconds(1);

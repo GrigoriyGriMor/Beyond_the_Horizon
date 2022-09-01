@@ -38,7 +38,6 @@ public class CharacterSelectController : MonoBehaviour
         for (int i = 0; i < visuals.Length; i++) {
             if (visuals[i].toggle.isOn) {
                 GameObject client = Instantiate(ClientController, Vector3.zero, Quaternion.identity);
-                client.GetComponent<ClientDataInput>().Init(mainController.GetResponseData(), charactersData.data[i], charactersData.server_id);
                 DontDestroyOnLoad(client);
 
                 SceneManager.LoadScene(1);
