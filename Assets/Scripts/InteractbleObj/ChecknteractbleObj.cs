@@ -57,18 +57,9 @@ public class ChecknteractbleObj : MonoBehaviour
                 }
                 else
                 {
-                    if (hit.collider.GetComponent<BilboardController>()) {
-                        currentIdObject = interactbleObjectController.GetInstanceID();
-                        if (lastCurrentObject != currentIdObject)
-                            CanUseObject(interactbleObjectController);
-
-                        lastCurrentObject = currentIdObject;
-                    }
-                    else {
-                        currentIdObject = 0;
-                        lastCurrentObject = currentIdObject;
-                        OutUseObject();
-                    }
+                    currentIdObject = 0;
+                    lastCurrentObject = currentIdObject;
+                    OutUseObject();
                 }
             }
             else

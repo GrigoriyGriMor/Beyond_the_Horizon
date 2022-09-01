@@ -323,17 +323,12 @@ public class EnemyController_Distance : EnemyBase
     private float timerDeath = 3.0f;
 
     private ControlQuestBase[] questAction = new ControlQuestBase[1];
-    private MissionQuestBrandBase[] missionQuestBrandBases = new MissionQuestBrandBase[1];
 
     private void Start()
     {
         questAction = GetComponents<ControlQuestBase>();
         if (questAction == null)
             questAction = GetComponentsInChildren<ControlQuestBase>();
-
-        missionQuestBrandBases = GetComponents<MissionQuestBrandBase>();                         //solo
-        if (missionQuestBrandBases == null)                                                      //solo
-            missionQuestBrandBases = GetComponentsInChildren<MissionQuestBrandBase>();           //solo
 
 
         UpdateUIEnemy();
@@ -924,13 +919,6 @@ public class EnemyController_Distance : EnemyBase
 
                         for (int j = 0; j < questAction.Length; j++)
                             questAction[j].CheckQuestPlayer(questManager);
-                    }
-
-                    if (missionQuestBrandBases != null)                                                               //solo
-                    {
-                        QuestBrandManager questBrandManager = currentTargetPlayer.GetComponent<QuestBrandManager>();  //solo
-                        for (int j = 0; j < missionQuestBrandBases.Length; j++)                                       //solo
-                            missionQuestBrandBases[j].CheckQuestPlayer(questBrandManager);                            //solo
                     }
                 }
 

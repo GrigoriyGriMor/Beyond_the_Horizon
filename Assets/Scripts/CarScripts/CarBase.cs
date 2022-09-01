@@ -332,12 +332,6 @@ public class CarBase : AbstractIO
         return questManager;
     }
 
-    public QuestBrandManager GetQuestBrandManager()
-    {
-        return playerController.GetComponent<QuestBrandManager>(); ;
-    }
-
-
     private IEnumerator TimerOutCar()
     {
         yield return new WaitForSeconds(timerOutCar);
