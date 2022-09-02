@@ -5,9 +5,13 @@ using UnityEngine.UI;
 
 public class ButtonUISpriteChanger : MonoBehaviour
 {
-    // private Button b_parent;
+    [Header("Если UI элемент")]
     [SerializeField] private Image buttonImage;
+
+    [Header("Если Sprite объект на сцене")]
     [SerializeField] private SpriteRenderer buttonSprite;
+
+    [Header("first-включенная / second-выключенная")]
     [SerializeField] private Sprite s_first;
     [SerializeField] private Sprite s_second;
 
