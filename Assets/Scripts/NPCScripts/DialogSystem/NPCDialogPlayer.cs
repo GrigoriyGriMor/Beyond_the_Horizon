@@ -45,16 +45,9 @@ public class NPCDialogPlayer : DialogBase
     //[SerializeField]
     private QuestManager questManagerPlayer;
 
-    private QuestBrandManager questBrandManagerPlayer;
-
     //[SerializeField]
     private ActivatorQuestDialog activatorQuestDialog;
 
-    [SerializeField]
-    private ActivatorQuestBrandDialog activatorQuestBrandDialog;
-
-    [SerializeField]
-    private ControlQuestBrandDialog controlQuestBrandDialog;
 
     //[SerializeField]
     private string nameBrand = "";
@@ -70,8 +63,6 @@ public class NPCDialogPlayer : DialogBase
     {
         indexArrayDialog = 0;
         TryGetComponent(out activatorQuestDialog);
-        TryGetComponent(out activatorQuestBrandDialog);
-        TryGetComponent(out controlQuestBrandDialog);
 
         CreateButtonAnswerPlayer();
         UIDialogWindow.gameObject.SetActive(false);
@@ -214,25 +205,6 @@ public class NPCDialogPlayer : DialogBase
         this.stateNPC = stateNPC;
         UIDialogWindow.gameObject.SetActive(true);
         npcController.currentPlayer.TryGetComponent(out questManagerPlayer);
-        npcController.currentPlayer.TryGetComponent(out questBrandManagerPlayer);
-
-        if (activatorQuestBrandDialog && questBrandManagerPlayer)
-        {
-            activatorQuestBrandDialog.SetNextDialog(questBrandManagerPlayer);
-        }
-        else
-        {
-            Debug.Log(" Not ActivatorQuestBrandDialog or questBrandManagerPlayer");
-        }
-
-        if (controlQuestBrandDialog && questBrandManagerPlayer)
-        {
-            controlQuestBrandDialog.SetNextDialog(questBrandManagerPlayer);
-        }
-        else
-        {
-            Debug.Log(" Not ActivatorQuestBrandDialog or questBrandManagerPlayer");
-        }
 
         if (activatorQuestDialog && questManagerPlayer)
         {

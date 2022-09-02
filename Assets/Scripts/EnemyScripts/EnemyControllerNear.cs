@@ -271,7 +271,6 @@ public class EnemyControllerNear : EnemyBase
     private InDamageModule inDamageModuleEnemy;
 
     private ControlQuestBase[] questAction = new ControlQuestBase[1];
-    private MissionQuestBrandBase[] missionQuestBrandBases = new MissionQuestBrandBase[1];
 
     private Coroutine refCoroutineUpdate;
 
@@ -282,9 +281,6 @@ public class EnemyControllerNear : EnemyBase
             questAction = GetComponentsInChildren<ControlQuestBase>();
         // if (refCoroutineUpdate == null) refCoroutineUpdate = StartCoroutine(CustomUpdate());
 
-        missionQuestBrandBases = GetComponents<MissionQuestBrandBase>();                         //solo
-        if (missionQuestBrandBases == null)                                                      //solo
-            missionQuestBrandBases = GetComponentsInChildren<MissionQuestBrandBase>();           //solo
 
         UpdateUIEnemy();
 
@@ -741,12 +737,6 @@ public class EnemyControllerNear : EnemyBase
                             questAction[j].CheckQuestPlayer(questManager);
                     }
 
-                    if (missionQuestBrandBases != null)                                                               //solo
-                    {
-                        QuestBrandManager questBrandManager = currentTargetPlayer.GetComponent<QuestBrandManager>();  //solo
-                        for (int j = 0; j < missionQuestBrandBases.Length; j++)                                       //solo
-                            missionQuestBrandBases[j].CheckQuestPlayer(questBrandManager);                            //solo
-                    }
                 }
 
                 Death();
