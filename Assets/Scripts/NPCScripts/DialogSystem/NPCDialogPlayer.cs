@@ -200,11 +200,27 @@ public class NPCDialogPlayer : DialogBase
         npcController.EndDialog();
     }
 
+    LookModule lookModule;
+
+    [SerializeField]
+    private Transform pointCameraTalking;
+
     public override void StartDialog(StateNPC stateNPC)
     {
         this.stateNPC = stateNPC;
         UIDialogWindow.gameObject.SetActive(true);
         npcController.currentPlayer.TryGetComponent(out questManagerPlayer);
+
+        lookModule = npcController.currentPlayer.GetComponentInChildren<LookModule>();
+
+        if (lookModule)
+        {
+            lookModule.TalkingNPC(this.transform, pointCameraTalking);
+        }
+        else
+        {
+            print("Not LookModule");
+        }
 
         if (activatorQuestDialog && questManagerPlayer)
         {
@@ -220,6 +236,14 @@ public class NPCDialogPlayer : DialogBase
 
     public override void EndDialog()
     {
+        if (lookModule)
+        {
+            lookModule.EndTalkingNPC();
+        }
+        else
+        {
+            print("Not LookModule");
+        }
         UIDialogWindow.gameObject.SetActive(false);
     }
 }

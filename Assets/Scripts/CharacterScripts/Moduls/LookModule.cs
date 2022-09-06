@@ -164,6 +164,62 @@ public class LookModule : CharacterBase
         targetPos = startPos;
     }
 
+
+    //solo
+   // [SerializeField]
+    //private Transform pointCameraTalking;
+    private Transform parentCamera;
+    private Vector3 lastPositionCamera;
+    private Quaternion quaternionCamera;
+    private float fieldOfView;
+    //solo
+
+    //solo
+    public void TalkingNPC(Transform NPCTransform, Transform pointCameraTalking = null)
+    {
+        parentCamera = mainCamera.transform.parent;
+        lastPositionCamera = mainCamera.transform.position;
+        quaternionCamera = mainCamera.transform.rotation;
+
+        Quaternion quaternionNPC = NPCTransform.rotation;
+        Transform parentPointCameraTalking = pointCameraTalking.transform.parent;
+        NPCTransform.LookAt(this.transform);
+        if (pointCameraTalking)
+        {
+            pointCameraTalking.SetParent(this.transform);
+        }
+        else
+        {
+            print(" Not pointCameraTalking");
+        }
+        NPCTransform.rotation = quaternionNPC;
+
+        float offSet = 0.0f; //objectTransform.position.y - _player.transform.position.y;
+
+        mainCamera.transform.SetParent(pointCameraTalking);
+        mainCamera.transform.localPosition = new Vector3(0, offSet, mainCamera.transform.localPosition.z);
+        targetPos = 0.0f;
+        mainCamera.transform.localRotation = new Quaternion(0, 0, 0, 0);
+        fieldOfView = mainCamera.GetComponent<Camera>().fieldOfView;
+        mainCamera.GetComponent<Camera>().fieldOfView = 30.0f;
+        //print("TalkingNPC");
+    }
+    //solo
+
+    //solo
+    public void EndTalkingNPC()
+    {
+        mainCamera.transform.SetParent(parentCamera);
+        mainCamera.transform.position = lastPositionCamera;
+        mainCamera.transform.rotation = quaternionCamera;
+        mainCamera.GetComponent<Camera>().fieldOfView = fieldOfView;
+        targetPos = startPos;
+        //print("EndTalkingNPC");
+    }
+    //solo
+
+
+
     public void Aim(bool aiming) {
         if (aiming) {
             factHorizontalRotateSpeed = horizontalRotateSpeed / 4;
