@@ -92,7 +92,7 @@ public class InventoryController : CharacterBase
 
     void Start() {
         try {
-            Instantiate(prefabsData.playerObjects[_player.body_type].playerPrefabForUI, modelPosition.position, modelPosition.rotation, modelPosition.transform);
+           // Instantiate(prefabsData.playerObjects[_player.body_type].playerPrefabForUI, modelPosition.position, modelPosition.rotation, modelPosition.transform);
         }
         catch (System.Exception ex) {
             Debug.LogError(ex.ToString());

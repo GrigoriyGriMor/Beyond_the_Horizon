@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8982b944439245546bce2a2fed6a0b12, type: 3}
   m_Name: GameObjectData
   m_EditorClassIdentifier: 
-  playerObjects: []
+  playerObjects:
+  - name: 
+    playerClientPrefab: {fileID: 1315074788372139065, guid: 75f58eaae53cf7c4d8f86a465b63d765, type: 3}
+    playerCloneForClient: {fileID: 0}
+    playerServerPrefab: {fileID: 0}
+    playerPrefabForUI: {fileID: 3914070773615812661, guid: c15a429ad797cad47b9931b393125c15, type: 3}
   warriorObjects:
   - name: 
     playerClientPrefab: {fileID: 0}
@@ -36,5 +41,11 @@ MonoBehaviour:
     playerPrefabForUI: {fileID: 0}
   NPCObjects: []
   transportObjects: []
-  otherObjects: []
+  otherObjects:
+  - {fileID: 11400000, guid: 434072980f41a2c4f94da7ba5938336b, type: 2}
+  - {fileID: 11400000, guid: b3084bb0573dc3b49a2f777d5bee27e8, type: 2}
+  - {fileID: 11400000, guid: fd29d16204f7f4549ae3417e8c7ea45b, type: 2}
+  - {fileID: 11400000, guid: 0f482f3698c90164a8125746152b286c, type: 2}
+  - {fileID: 11400000, guid: 95fb097e8d259ff41a07871a4596d697, type: 2}
+  - {fileID: 11400000, guid: 84294f2bde1622849843a9254b1000d5, type: 2}
   gradeMaterials: []
