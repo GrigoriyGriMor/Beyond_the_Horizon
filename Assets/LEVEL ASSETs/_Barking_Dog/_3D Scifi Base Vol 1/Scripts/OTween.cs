@@ -1,5 +1,4 @@
-﻿// Copyright 2016/2017 By Hedgehog Team / Creepy Cat / Barking Dog
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 

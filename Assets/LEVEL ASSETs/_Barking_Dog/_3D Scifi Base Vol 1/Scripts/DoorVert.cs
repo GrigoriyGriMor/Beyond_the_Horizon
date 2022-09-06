@@ -1,5 +1,4 @@
-﻿// Copyright 2016/2017 By Hedgehog Team / Creepy Cat / Barking Dog
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class DoorVert : MonoBehaviour {
@@ -23,19 +22,15 @@ public class DoorVert : MonoBehaviour {
 	}
 	
 	private void UpdateOpenDoor(float f){		
-		// Thanks to Ilia. Fix a random door bug...
-		//Vector3 pos = transform.TransformDirection( new Vector3( 0,1,0));
-		Vector3 pos = new Vector3 (1,0,0);
-
+		Vector3 pos = transform.TransformDirection( new Vector3( 0,1,0));
 		transform.localPosition = StartlocalPos + pos*f;
+		
 	}
 
-	private void UpdateCloseDoor(float f){	
-		// Thanks to Ilia. Fix a random door bug...	
-		// Vector3 pos = transform.TransformDirection( new Vector3( 0,-f,0)) ;
-		Vector3 pos = new Vector3 (-f,0,0);
-
+	private void UpdateCloseDoor(float f){		
+		Vector3 pos = transform.TransformDirection( new Vector3( 0,-f,0)) ;
 		transform.localPosition = endlocalPos-pos;
+		
 	}
 	
 	private void EndOpen(){
