@@ -1,0 +1,44 @@
+1. Thanks for the purchase!
+
+2. Some general information, I left notes in every folder in case you get lost :)
+
+3. Ignore all the yellow error messages in the demo scenes! They are most likely caused by the mesh brush tool I was using to make the scene after I removed it from the pack or they might be general Unity version compile errors.
+
+4. For more information regarding the assets follow this thread: 
+https://forum.unity.com/threads/rocky-hills-environment-pack-development-thread.381438/
+
+Or contact me via email: florianalexandru05@gmail.com
+
+For technical question regarding Custom Tree Importer (Cti) assets go here: 
+
+https://forum.unity.com/threads/released-custom-tree-importer.263224/
+
+5. In case you're using unity 2018 the leaf shader might disappear. It's just a bug with 2018 so you'll have to import the 2018 leaf fix I put in the CTI folder.
+
+6. "CTI wind from script" is a bit weird so if it might not work when you change the direction or strength in the scene just delete it and add another wind zone with a new attached wind script! (Terrain tree wind only works with wind from script)
+
+7. Remember to turn on instancing on materials yourself!
+
+8. Enjoy making a fabulous nature!
+---------------------
+
+Version updates fixes:
+
+Fixed snow gloss map for OldBeechTree
+Added 2 golden textures
+
+---------------------
+
+*CTI Instructions*
+
+Hi there and welcome to the Custom Tree Importer. 
+
+Before starting please make sure that your project is set to use the linear color space in Edit -> Project Settings -> Player. 
+
+In case your camera uses deferred rendering you also have to assign the CTI deferred lighting shaders in Edit -> Project Settings -> Graphics:
+ Under the Built-in shader settings change Deferred to custom, then assign the CTI_Internal-DeferredShading shader. 
+Also change Deferred Reflections to Custom and assign the CTI_Internal-DeferredReflections shader. 
+
+In case you use Unity >= 5.6.0 you will have to enable instancing on each material manually. 
+
+Please note: As the project contains shaders which support Unity 5.5 as well as Unity 2017.2 you may get a lot of shader warnings, just ignore them!

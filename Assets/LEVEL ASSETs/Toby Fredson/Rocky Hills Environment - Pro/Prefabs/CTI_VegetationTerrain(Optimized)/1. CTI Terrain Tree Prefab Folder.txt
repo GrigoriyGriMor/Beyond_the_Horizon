@@ -1,0 +1,5 @@
+1. CTI Terrain Tree Prefab Folder. 
+
+Every tree from the Main CTI prefab folder should work right off the bat with wind and the terrain engine. The only problem is the "terrain trees don't work with custom or mesh colliders", "only capsule colliders work". I kept all the costume colliders for every tree in case someone uses any kind of other vegetation solution as the trees work with collision as mesh trees. If you want to use them as terrain trees you should just simply change the custom colliders with capsule colliders on every tree yourself.
+
+2. While tree creator like trees usually render very fast, LOD trees suffer from the same issue SpeedTrees do: In case you have a lot of them the performance may drop unless you use other 3rd party solutions like Critias Foliage or Vegetation Studio. I would recommend turning off the speedtree crossfading for better performance!
