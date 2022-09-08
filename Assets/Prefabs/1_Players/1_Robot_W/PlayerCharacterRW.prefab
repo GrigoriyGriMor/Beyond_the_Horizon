@@ -1579,7 +1579,8 @@ MonoBehaviour:
   minRayDistance: 0.1
   raycastPoint: {fileID: 1315074786722934815}
   rayDistance: 2
-  moveCamSpeed: 50
+  moveCamSpeed: 5
+  pointCameraTalking: {fileID: 6802186564833971613}
 --- !u!1 &1315074788372139065
 GameObject:
   m_ObjectHideFlags: 0
@@ -1635,8 +1636,9 @@ Transform:
   - {fileID: 4687516360995692778}
   - {fileID: 1638901246}
   - {fileID: 7520049383367004210}
+  - {fileID: 6802186564833971613}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1315074788372139062
 Rigidbody:
@@ -4613,6 +4615,37 @@ Transform:
   m_Father: {fileID: 6588787221276257021}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &9092561730507878170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6802186564833971613}
+  m_Layer: 3
+  m_Name: PointCameraTalking
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6802186564833971613
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9092561730507878170}
+  m_LocalRotation: {x: 0, y: 0.28568837, z: 0, w: 0.9583226}
+  m_LocalPosition: {x: -0.01, y: 1.52, z: -0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1315074788372139066}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 33.2, z: 0}
 --- !u!1001 &394341912080225996
 PrefabInstance:
   m_ObjectHideFlags: 0
