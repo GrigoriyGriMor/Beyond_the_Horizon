@@ -53,6 +53,8 @@ public class LookModule : CharacterBase
 
         factHorizontalRotateSpeed = horizontalRotateSpeed;
         factVerticalRotateSpeed = verticalRotateSpeed;
+
+        initWorldPosition = mainCamera.transform.position; //////////////////////
     }
 
     //функция осматривания вокруг персонажа (при нажатой "C")
@@ -245,4 +247,92 @@ public class LookModule : CharacterBase
 
         mainCamera.transform.localPosition = new Vector3(mainCamera.transform.localPosition.x, mainCamera.transform.localPosition.y, Mathf.LerpUnclamped(mainCamera.transform.localPosition.z, target, moveCamSpeed * Time.deltaTime));
     }
+
+
+    #region Followcamera 
+    [Header("---------Followcamera---------")]
+    //[SerializeField]
+    //private string targetTag = "Player";
+    [SerializeField]
+    private Transform targetTransform;
+    //public Transform TargetTrasfrom
+    //{
+    //    get => targetTransform;
+    //    set => targetTransform = value;
+    //}
+    [Header("Offset settings")]
+    [SerializeField]
+    private Vector3 offsetPosition;
+
+    [Header("Following in world settings")]
+    [SerializeField]
+    private bool followWorldX = true;
+    [SerializeField]
+    private bool followWorldY = true;
+    [SerializeField]
+    private bool followWorldZ = true;
+
+    [Header("Smooth settings")]
+    [SerializeField]
+    private bool smoothUpdate = true;
+    [SerializeField]
+    private float speedUpdate = 1f;
+
+    private Vector3 initWorldPosition;
+
+
+    private void Awake()
+    {
+        // initWorldPosition = transform.position;
+       // initWorldPosition = mainCamera.transform.position;
+        //targetTransform = foundGO.transform;
+    }
+
+    //private IEnumerator Start()
+    //{
+    //    if (targetTransform)
+    //        yield break;
+
+    //    while (true)
+    //    {
+    //        GameObject foundGO = GameObject.FindGameObjectWithTag(targetTag);
+
+    //        if (foundGO)
+    //        {
+    //            targetTransform = foundGO.transform;
+    //            break;
+    //        }
+
+    //        yield return null;
+    //    }
+    //}
+    private void LateUpdate()
+    {
+        if (!targetTransform)
+            return;
+
+        UpdatePosition();
+    }
+
+    private void UpdatePosition()
+    {
+        Vector3 newPosition = targetTransform.position + offsetPosition;
+
+        if (!followWorldX)
+            newPosition.x = initWorldPosition.x;
+
+        if (!followWorldY)
+            newPosition.y = initWorldPosition.y;
+
+        if (!followWorldZ)
+            newPosition.z = initWorldPosition.z;
+
+        if (smoothUpdate)
+            newPosition = Vector3.Lerp(mainCamera.transform.position, newPosition, speedUpdate * Time.deltaTime);
+
+        mainCamera.transform.position = newPosition;
+    }
+
+    #endregion TargetFollowerPosition
+
 }
