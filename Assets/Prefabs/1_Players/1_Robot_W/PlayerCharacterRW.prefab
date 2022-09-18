@@ -113,6 +113,37 @@ Transform:
   m_Father: {fileID: 3221284427968647316}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &181344405687314270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3312217617367047418}
+  m_Layer: 3
+  m_Name: PointCameraInCar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3312217617367047418
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181344405687314270}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 6.05, z: -12.85}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1315074788358007255}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &199447392674678295
 GameObject:
   m_ObjectHideFlags: 0
@@ -1537,6 +1568,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9212376179434219390}
+  - {fileID: 3312217617367047418}
   - {fileID: 1315074787992396872}
   - {fileID: 1315074786722934815}
   m_Father: {fileID: 1315074787268504206}
@@ -1572,7 +1604,6 @@ MonoBehaviour:
   rightStepTrigger: StepRight
   leftStepTrigger: StepLeft
   RunRotateFloat: RunRotate
-  _personCamera: {fileID: 0}
   maxDistance: 50
   minDistance: 2.5
   TargetPoint: {fileID: 1315074787719076663}
@@ -1580,14 +1611,14 @@ MonoBehaviour:
   minRayDistance: 0.1
   raycastPoint: {fileID: 1315074786722934815}
   rayDistance: 2
-  moveCamSpeed: 5
-  targetTransform: {fileID: 9212376179434219390}
-  offsetPosition: {x: 0, y: 0, z: 0}
-  followWorldX: 1
-  followWorldY: 1
-  followWorldZ: 1
-  smoothUpdate: 1
-  speedUpdate: 1
+  moveCamSpeed: 1
+  visualGO:
+  - {fileID: 8190251497840552080}
+  - {fileID: 368188922425063636}
+  delayFlyCamera: 0.1
+  pointFollowCamera: {fileID: 9212376179434219390}
+  pointCameraInCar: {fileID: 3312217617367047418}
+  moveCameraFollow: 35
 --- !u!1 &1315074788372139065
 GameObject:
   m_ObjectHideFlags: 0
@@ -1645,7 +1676,7 @@ Transform:
   - {fileID: 7520049383367004210}
   - {fileID: 6802186564833971613}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1315074788372139062
 Rigidbody:
@@ -5669,7 +5700,7 @@ PrefabInstance:
     - target: {fileID: 3213259632764892691, guid: 692fa8562cfa7fa4f83e5420b2c6c9b6, type: 3}
       propertyPath: m_Content
       value: 
-      objectReference: {fileID: 7252584815972285010}
+      objectReference: {fileID: 8489448202288422059}
     - target: {fileID: 3255213908658640842, guid: 692fa8562cfa7fa4f83e5420b2c6c9b6, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -7011,11 +7042,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd5d7cfa872798b40b5cc59de4677380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &7252584815972285010 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 324232831140593025, guid: 692fa8562cfa7fa4f83e5420b2c6c9b6, type: 3}
-  m_PrefabInstance: {fileID: 6978806443278075859}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7455721776391279510 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 549922974119908421, guid: 692fa8562cfa7fa4f83e5420b2c6c9b6, type: 3}
@@ -7184,6 +7210,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &8489448202288422059 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1515785996345990008, guid: 692fa8562cfa7fa4f83e5420b2c6c9b6, type: 3}
+  m_PrefabInstance: {fileID: 6978806443278075859}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8506177884836604272 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1645415628727922339, guid: 692fa8562cfa7fa4f83e5420b2c6c9b6, type: 3}
