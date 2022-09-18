@@ -47,17 +47,18 @@ public class LookModule : CharacterBase
     [Header("need correct")]
     [SerializeField] private GameObject[] visualGO = new GameObject[2];
 
-    private void Start() {
+    private void Start()
+    {
 
-        startPos = mainCamera.transform.localPosition.z;
-        inCar = startPos * 3;
+        //startPos = mainCamera.transform.localPosition.z;
+       // inCar = startPos * 3;
         lastTransform = pointFollowCamera.localPosition;
 
 
         //solo
-        targetPosZ = startPos;
-        mainCameraX = mainCamera.transform.localPosition.x;
-        mainCameraY = mainCamera.transform.localPosition.y;
+        //targetPosZ = startPos;
+        //mainCameraX = mainCamera.transform.localPosition.x;
+       // mainCameraY = mainCamera.transform.localPosition.y;
         //solo
 
         factHorizontalRotateSpeed = horizontalRotateSpeed;
@@ -65,7 +66,8 @@ public class LookModule : CharacterBase
     }
 
     //функция осматривания вокруг персонажа (при нажатой "C")
-    public void CameraRotate(Vector2 mousePos, bool moveForward = false) {
+    public void CameraRotate(Vector2 mousePos, bool moveForward = false)
+    {
         yRotate = yRotateCamera;
 
         float xAxis = mousePos.x * factHorizontalRotateSpeed * Time.deltaTime;
@@ -76,7 +78,8 @@ public class LookModule : CharacterBase
 
         rotateCameraCenter.transform.localRotation = Quaternion.Euler(yRotate, rotateCameraCenter.transform.localEulerAngles.y + xAxis, rotateCameraCenter.transform.localEulerAngles.z);
 
-        if (moveForward) {
+        if (moveForward)
+        {
             visual.transform.rotation = Quaternion.Euler(visual.transform.eulerAngles.x, rotateCameraCenter.transform.eulerAngles.y, visual.transform.eulerAngles.z);
             rotateCameraCenter.transform.localRotation = Quaternion.Euler(yRotate, 0, 0);
 
@@ -137,7 +140,7 @@ public class LookModule : CharacterBase
                 rotateCameraCenter.localRotation = rotateAIMyCenter.transform.localRotation;
 
                 if (xAxis < 0)
-                { 
+                {
                     playerAnim.SetBool(leftStepTrigger, true);
                     playerAnim.SetFloat("RunRotate", -1);
                 }
@@ -163,7 +166,6 @@ public class LookModule : CharacterBase
     }
 
     private float targetPosZ;
-    private float targetPos;
 
     private Vector3 lastTransform;
     public void SetInCar()
@@ -184,8 +186,6 @@ public class LookModule : CharacterBase
     }
 
     //solo
-    private Transform parentCamera;
-    private Quaternion quaternionCamera;
     [SerializeField]
     private float delayFlyCamera = 0.1f;
     [SerializeField]
@@ -196,25 +196,22 @@ public class LookModule : CharacterBase
     private Transform pointCameraInCar;
     private GameObject backPlane;
     private bool isTalking;
-    private float mainCameraX;
-    private float mainCameraY;
-    private float mainCameraLastX;
-    private float mainCameraLastY;
+    private Vector3 lastPositionFollowCamera;
+    private Transform lastTransformCamera;
     //solo
 
     //solo
     public void TalkingNPC(Transform pointCameraTalking = null, GameObject backPlane = null, Transform pointLookCamera = null)
     {
-        if (pointCameraTalking == null || backPlane == null) return;
+        if ((pointCameraTalking == null || backPlane == null) || pointLookCamera == null) return;
 
         this.backPlane = backPlane;
         this.pointLookCamera = pointLookCamera;
-        parentCamera = mainCamera.transform.parent;
-        quaternionCamera = mainCamera.transform.rotation;
-        //playerAnim.gameObject.SetActive(false);
         for (int i = 0; i < visualGO.Length; i++)
             visualGO[i].SetActive(false);
         isTalking = true;
+        lastTransformCamera = pointFollowCamera;
+        lastPositionFollowCamera = pointFollowCamera.position;
         StartCoroutine(DelayFlyCamera(pointCameraTalking));
     }
     //solo
@@ -225,12 +222,7 @@ public class LookModule : CharacterBase
 
         if (pointCameraTalking)
         {
-            mainCameraLastX = mainCamera.transform.localPosition.x;
-            mainCameraLastY = mainCamera.transform.localPosition.y;
-            mainCamera.transform.SetParent(pointCameraTalking);
-            mainCameraX = 0.0f;
-            mainCameraY = 0.0f;
-            targetPosZ = 0.0f;
+            pointFollowCamera = pointCameraTalking;
             backPlane.SetActive(true);
         }
         else
@@ -242,12 +234,8 @@ public class LookModule : CharacterBase
     //solo
     public void EndTalkingNPC()
     {
-        mainCamera.transform.SetParent(parentCamera);
-        mainCameraX = mainCameraLastX;
-        mainCameraY = mainCameraLastY;
-        mainCamera.transform.rotation = quaternionCamera;
-        targetPosZ = startPos;
-        //playerAnim.gameObject.SetActive(true);
+        pointFollowCamera = lastTransformCamera;
+        pointFollowCamera.position = lastPositionFollowCamera;
         for (int i = 0; i < visualGO.Length; i++)
             visualGO[i].SetActive(true);
         backPlane.SetActive(false);
@@ -255,12 +243,15 @@ public class LookModule : CharacterBase
     }
     //solo
 
-    public void Aim(bool aiming) {
-        if (aiming) {
+    public void Aim(bool aiming)
+    {
+        if (aiming)
+        {
             factHorizontalRotateSpeed = horizontalRotateSpeed / 4;
             factVerticalRotateSpeed = verticalRotateSpeed / 4;
         }
-        else {
+        else
+        {
             factHorizontalRotateSpeed = horizontalRotateSpeed;
             factVerticalRotateSpeed = verticalRotateSpeed;
         }
@@ -271,7 +262,6 @@ public class LookModule : CharacterBase
 
         RaycastHit hit;
         float target;
-        //lastTransform = pointFollowCamera.localPosition;
 
         Physics.Raycast(raycastPoint.position, raycastPoint.forward * -1, out hit, rayDistance);
 
@@ -292,14 +282,10 @@ public class LookModule : CharacterBase
         }
         else
         {
-            UpdatePosititon();
+            mainCamera.transform.LookAt(TargetPoint);
         }
 
-
-        // _mainCamera.transform.localPosition = new Vector3(_mainCamera.transform.localPosition.x, _mainCamera.transform.localPosition.y, Mathf.LerpUnclamped(_mainCamera.transform.localPosition.z, target, moveCamSpeed * Time.deltaTime));
-        //_mainCamera.transform.localPosition = new Vector3(Mathf.LerpUnclamped(_mainCamera.transform.localPosition.x, mainCameraX, moveCamSpeed * Time.deltaTime),
-        //   Mathf.LerpUnclamped(_mainCamera.transform.localPosition.y, mainCameraY, moveCamSpeed * Time.deltaTime),
-        //    Mathf.LerpUnclamped(_mainCamera.transform.localPosition.z, target, moveCamSpeed * Time.deltaTime));
+        UpdatePosititon();
     }
 
     [SerializeField]
@@ -310,7 +296,6 @@ public class LookModule : CharacterBase
            Mathf.LerpUnclamped(mainCamera.transform.position.y, pointFollowCamera.position.y, moveCameraFollow * Time.deltaTime),
               Mathf.LerpUnclamped(mainCamera.transform.position.z, pointFollowCamera.position.z, moveCameraFollow * Time.deltaTime));
 
-        mainCamera.transform.LookAt(TargetPoint);
     }
 
 }
