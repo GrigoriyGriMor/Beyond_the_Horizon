@@ -200,10 +200,14 @@ public class NPCDialogPlayer : DialogBase
         npcController.EndDialog();
     }
 
-    LookModule lookModule;
+    private LookModule lookModule;
 
     [SerializeField]
     private Transform pointCameraTalking;
+    [SerializeField]
+    private Transform pointLookCamera;
+    [SerializeField]
+    private GameObject backPlane;
 
     public override void StartDialog(StateNPC stateNPC)
     {
@@ -215,7 +219,7 @@ public class NPCDialogPlayer : DialogBase
 
         if (lookModule)
         {
-            lookModule.TalkingNPC(this.transform, pointCameraTalking);
+            lookModule.TalkingNPC(pointCameraTalking, backPlane,  pointLookCamera);
         }
         else
         {
