@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.ProBuilder.Shapes;
 
 public class InDamageModule : CharacterBase {
     [Header("Heal Point")]
@@ -38,6 +39,13 @@ public class InDamageModule : CharacterBase {
     [SerializeField] private float healRegen = 15.0f;
     [SerializeField] private float healRegenTime = 5.0f;
     [SerializeField] private ParticleSystem healParticle;
+    [SerializeField] private Rigidbody[] AllRagdoll;
+
+    private float impulse;
+    private Transform shotPosition;
+
+    private Animator _curentAminator;
+    private RaycastHit hit;
 
     private void Start() {
         if (damageVignette) {
@@ -46,13 +54,13 @@ public class InDamageModule : CharacterBase {
         }
 
         currentHeal = maxHeal;
-        healPointBar.maxValue = maxHeal;
-        healPointBar.value = currentHeal;
+        //healPointBar.maxValue = maxHeal;
+        //healPointBar.value = currentHeal;
         if (healText) healText.text = currentHeal.ToString();
 
         currentShield = maxShield;
-        shieldPointBar.maxValue = maxShield;
-        shieldPointBar.value = currentShield;
+        //shieldPointBar.maxValue = maxShield;
+        //shieldPointBar.value = currentShield;
         if (shieldText) shieldText.text = currentShield.ToString();
 
         StartCoroutine(WaitStart());
@@ -67,7 +75,18 @@ public class InDamageModule : CharacterBase {
     }
 
     float lastShield;
-    public void InDamage(float damage, RaycastHit hit, Transform objectDamage = null) {
+    public void InDamage(float damage, RaycastHit hit, float impulse = 0, Transform objectDamage = null, Transform shotPosition = null) {
+
+        if (impulse != 0)
+            this.impulse = impulse;
+
+        if (shotPosition != null)
+            this.shotPosition = shotPosition;
+
+        this.hit = hit;
+
+        Debug.Log(0);
+
         if (currentHeal <= 0) return;
         if (objectDamage) this.objectDamage = objectDamage;     // Solo
 
@@ -172,13 +191,34 @@ public class InDamageModule : CharacterBase {
             Deach();
     }
 
+
     private void Deach() {
         if (damageVignette) bloom.intensity.value = 0.75f;
 
+        if (GetComponent<Animator>())
+            GetComponent<Animator>().enabled = false;
+
+        if (AllRagdoll != null)
+        {
+            for (int i = 0; i < AllRagdoll.Length; i++)
+                AllRagdoll[i].isKinematic = false;
+        }
+
+        AddForce(hit);
         deach.Invoke();
+
         if (playerAnim) {
             playerAnim.SetTrigger("Die");
         }
+    }
+
+    private void AddForce(RaycastHit hit)
+    {
+        Collider col = hit.collider;
+        var dir = (hit.point - shotPosition.transform.position);
+
+        Rigidbody _rigidbody = hit.collider.GetComponent<Rigidbody>();
+        _rigidbody.AddForce(dir * impulse, ForceMode.Impulse);
     }
 
     public float GetHeal() {

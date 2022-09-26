@@ -13,6 +13,7 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private float damage = 10;
     [SerializeField] private float maxFireDistance = 100.0f;
     [SerializeField] private float effectFireDistance = 50.0f;
+    [SerializeField] private float Impulse;
 
     [Header("")]
     [SerializeField] private float shootGup = 0.1f;
@@ -90,7 +91,7 @@ public class WeaponController : MonoBehaviour
     }
 
     //выстрел
-    private void Shot()
+    public void Shot()//
     {
         gunMagazine -= 1;
         if (_bulletText != null)
@@ -110,12 +111,22 @@ public class WeaponController : MonoBehaviour
         {
             if (hit.collider != null)
             {
-                if (hit.collider.GetComponent<InDamageModule>())
+                if (hit.collider.GetComponent<InDamageModule>() || hit.collider.GetComponent<InDamageTranslate>())
                 {
-                    if (Vector3.Distance(hit.point, muzzlePoint.position) < effectFireDistance) 
-                        hit.collider.GetComponent<InDamageModule>().InDamage(damage, hit, transform);
+                    if (hit.collider.GetComponent<InDamageTranslate>())
+                    {
+                        if (Vector3.Distance(hit.point, muzzlePoint.position) < effectFireDistance)
+                            hit.collider.GetComponent<InDamageTranslate>().StartInDamageModule(damage, Impulse, hit, transform, muzzlePoint);
+                        else
+                            hit.collider.GetComponent<InDamageTranslate>().StartInDamageModule(damage * 0.5f, Impulse, hit, transform, muzzlePoint);
+                    }
                     else
-                        hit.collider.GetComponent<InDamageModule>().InDamage(damage * 0.5f, hit, transform);  //если дистанция больше эффективной, то урон снижается
+                    {
+                        if (Vector3.Distance(hit.point, muzzlePoint.position) < effectFireDistance)
+                            hit.collider.GetComponent<InDamageModule>().InDamage(damage, hit, Impulse, transform, muzzlePoint);
+                        else
+                            hit.collider.GetComponent<InDamageModule>().InDamage(damage * 0.5f, hit, Impulse, transform, muzzlePoint);  //если дистанция больше эффективной, то урон снижается
+                    }
                 }
                 else
                 {
