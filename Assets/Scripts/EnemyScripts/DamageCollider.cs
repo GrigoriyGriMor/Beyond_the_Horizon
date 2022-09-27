@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class DamageCollider : MonoBehaviour
 {
-
     [SerializeField]
     private float damageAttack = 10;
 
@@ -30,7 +29,7 @@ public class DamageCollider : MonoBehaviour
 
         if ((playerController && inDamageModule) && enemyController.stateEnemy == StateEnemy.attack)
         {
-            inDamageModule.InDamage(damageAttack, hit, transform);
+            inDamageModule.InDamage(damageAttack ,hit, 0 ,transform);
         }
     }
 

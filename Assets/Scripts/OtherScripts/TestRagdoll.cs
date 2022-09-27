@@ -4,22 +4,15 @@ using UnityEngine;
 
 public class TestRagdoll : MonoBehaviour
 {
+    public Rigidbody[] AllRigibody;
+
     private Animator _animator;
 
     private void Start()
     {
+        for (int i = 0; i < AllRigibody.Length; i++)
+            AllRigibody[i].isKinematic = true;
+
         _animator = GetComponent<Animator>();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (_animator.enabled)
-                _animator.enabled = false;
-
-            else
-                _animator.enabled = true;
-        }
     }
 }
