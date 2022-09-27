@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
     private SupportClass.PlayerStateMode mode = SupportClass.PlayerStateMode.Idle;
     private WeaponController UsedWeapon;
 
@@ -66,11 +67,13 @@ public class PlayerController : MonoBehaviour {
     [Header("Respawn Particle")]
     [SerializeField] private ParticleSystem respawnParticle;
 
-    public SupportClass.PlayerStateMode GetMode() {
+    public SupportClass.PlayerStateMode GetMode()
+    {
         return mode;
     }
 
-    private void Awake() {
+    private void Awake()
+    {
         if (_rb == null) Debug.LogError("Rigidbody _rb component is NULL");
         if (playerAnim == null) Debug.LogError("Animator playernim component is NULL");
         _collider = GetComponent<CapsuleCollider>();
@@ -98,19 +101,23 @@ public class PlayerController : MonoBehaviour {
         inDamageModule.deach.AddListener(() => StartCoroutine(Death()));
     }
 
-    private void Start() {
+    private void Start()
+    {
         StartCoroutine(SetPlayer());
     }
 
-    private IEnumerator SetPlayer() {
-        while (!PlayerParameters.Instance) {
+    private IEnumerator SetPlayer()
+    {
+        while (!PlayerParameters.Instance)
+        {
             yield return new WaitForFixedUpdate();
         }
 
         PlayerParameters.Instance.SetPlayerController(this);
     }
 
-    public void StartThisGame() {
+    public void StartThisGame()
+    {
         StartCoroutine(StartGame());
     }
 
@@ -123,7 +130,8 @@ public class PlayerController : MonoBehaviour {
         gameIsPlayed = true;
     }
 
-    private void Update() {
+    private void Update()
+    {
         if (!gameIsPlayed) return;
 
         playerAnim.SetFloat("VelocityY", _rb.velocity.y);
@@ -152,7 +160,8 @@ public class PlayerController : MonoBehaviour {
                 inDamageModule.InDamageAfterFall(Mathf.Abs(_rb.velocity.y));
                 StartCoroutine(StayAfterFall());
             }
-            else {
+            else
+            {
                 if (_rb.velocity.y < -10 && isGrounded)
                 {
                     hightControl = false;
@@ -171,7 +180,8 @@ public class PlayerController : MonoBehaviour {
             moveAxis = Vector2.zero;
     }
 
-    private IEnumerator StayAfterFall() {
+    private IEnumerator StayAfterFall()
+    {
         isFlipping = true;
         SetNewBoneWeight(0);
         _rb.velocity = new Vector3(0, 0, 0);
@@ -196,16 +206,57 @@ public class PlayerController : MonoBehaviour {
     }
 
     #region _Move
-    public void MoveCharacter(Vector2 moveVector) {
-        if (gameIsPlayed && (isGrounded && !isFlipping)) {
+    public void MoveCharacter(Vector2 moveVector)
+    {
+        if (gameIsPlayed && (isGrounded && !isFlipping))
+        {
             moveAxis = moveVector;
             moveController.MoveAxis(moveAxis, mode, isCrouching);
 
-            if (moveAxis == Vector2.zero && isSprint)
-                SprintControl(false);
+            if (moveAxis == Vector2.zero)
+            {
+                if (isSprint)
+                {
+                    SprintControl(false);
+                }
+
+                {
+                if (isOneKeyDown && refOneKeyDown == null)
+                    isSecondKeyDown = true;
+                }
+            }
+            else
+            {
+                isOneKeyDown = true;
+                refOneKeyDown = StartCoroutine(OneKeyDown());
+            }
         }
     }
     #endregion
+
+    private Coroutine refOneKeyDown;
+    [SerializeField]
+    private float delaySecondKeyDown = 0.1f;
+    [SerializeField]
+    private bool isOneKeyDown;
+    [SerializeField]
+    private bool isSecondKeyDown;
+
+    private IEnumerator OneKeyDown()
+    {
+        yield return new WaitForSeconds(delaySecondKeyDown);
+        refOneKeyDown = null;
+        isOneKeyDown = false;
+    }
+
+    private Coroutine refOneSprint;
+    private IEnumerator OneSprint()
+    {
+        SprintControl(true);
+        yield return new WaitForSeconds(1.0f);
+        SprintControl(false);
+        refOneSprint = null;
+    }
 
     #region _Jump
     public void Jump()
@@ -388,41 +439,50 @@ public class PlayerController : MonoBehaviour {
     #endregion
 
     #region QuickSystem
-    public void UseQuickSystem() {
+    public void UseQuickSystem()
+    {
         quickMenuSystem.UseQuickMenu();
     }
 
-    public void UseMap() {
+    public void UseMap()
+    {
         quickMenuSystem.UseMap();
     }
 
-    public void UseMission() {
+    public void UseMission()
+    {
         quickMenuSystem.UseMission();
     }
-    public void UseInventory() {
+    public void UseInventory()
+    {
         quickMenuSystem.UseInventory();
     }
 
-    public void UseStore() {
+    public void UseStore()
+    {
         quickMenuSystem.UseStore();
     }
 
-    public void UseIslandStore() {
+    public void UseIslandStore()
+    {
         quickMenuSystem.UseIslandStore();
     }
     #endregion
 
-    public void DialogIsActive() {
+    public void DialogIsActive()
+    {
         playerAnim.SetFloat("Speed", 0);
     }
 
     #region Skills
-    public void UseSkill(int i) {
+    public void UseSkill(int i)
+    {
         skillsModule.UseSkill(i);
     }
     #endregion
 
-    private IEnumerator Death() {
+    private IEnumerator Death()
+    {
         gameIsPlayed = false;
 
         AimActivate(false);
@@ -436,8 +496,10 @@ public class PlayerController : MonoBehaviour {
         StartCoroutine(RespawnCorutine());
     }
 
-    private IEnumerator RespawnCorutine() {
-        if (SpawnerPlayer.Instance) {
+    private IEnumerator RespawnCorutine()
+    {
+        if (SpawnerPlayer.Instance)
+        {
             Vector3 point = SpawnerPlayer.Instance.GetSpawnPos();
             transform.position = new Vector3(point.x, point.y, point.z);
         }
@@ -450,19 +512,24 @@ public class PlayerController : MonoBehaviour {
     #region When object need use
     private InteractbleObjectController currentInteractiveItem = null;
 
-    public void UseItem() {
-        if (currentInteractiveItem != null) {
-            switch (currentInteractiveItem.itemType) {
+    public void UseItem()
+    {
+        if (currentInteractiveItem != null)
+        {
+            switch (currentInteractiveItem.itemType)
+            {
                 case SupportClass.interactiveItemType.NPC:
                     if (currentInteractiveItem.GetComponent<NpcController>()) currentInteractiveItem.GetComponent<NpcController>().StartDialog(this);
                     break;
                 case SupportClass.interactiveItemType.Car:
                     CarBase car = currentInteractiveItem.GetComponentInParent<CarBase>();
-                    if (car != null) {
+                    if (car != null)
+                    {
                         if (mode == SupportClass.PlayerStateMode.Combat) SetNewFixMode(SupportClass.PlayerStateMode.Idle);
                         car.StartCar(this);
                         lookController.SetInCar();
-                        car.exitCar.AddListener(() => {
+                        car.exitCar.AddListener(() =>
+                        {
                             lookController.ExitCar();
                             car.exitCar.RemoveAllListeners();
                         });
@@ -475,10 +542,11 @@ public class PlayerController : MonoBehaviour {
                     break;
             }
         }
-            //currentInteractiveItem.UseActivity(this);      
+        //currentInteractiveItem.UseActivity(this);      
     }
 
-    public void CanUseObject(string _nameItem, string _eventItem, InteractbleObjectController itemController) {
+    public void CanUseObject(string _nameItem, string _eventItem, InteractbleObjectController itemController)
+    {
         if (useObjectPanel == null) return;
 
         useObjectPanel.gameObject.SetActive(true);
@@ -489,7 +557,8 @@ public class PlayerController : MonoBehaviour {
         currentInteractiveItem = itemController;
     }
 
-    public void OutUseObject() {
+    public void OutUseObject()
+    {
         if (useObjectPanel == null) return;
 
         useObjectPanel.gameObject.SetActive(false);
@@ -507,7 +576,7 @@ public class PlayerController : MonoBehaviour {
     {
         switch (newMode)
         {
-            case SupportClass.PlayerStateMode.Idle :
+            case SupportClass.PlayerStateMode.Idle:
                 mode = newMode;
                 if (weightCoroutine != null) StopCoroutine(weightCoroutine);
                 weightCoroutine = StartCoroutine(WeightCorection(0));
@@ -516,9 +585,9 @@ public class PlayerController : MonoBehaviour {
                 //need correct
                 playerAnim.SetLayerWeight(1, 0);
                 break;
-            case SupportClass.PlayerStateMode.Combat :
+            case SupportClass.PlayerStateMode.Combat:
                 mode = newMode;
-                
+
                 if (UsedWeapon != null)
                 {
                     if (weightCoroutine != null) StopCoroutine(weightCoroutine);
@@ -595,7 +664,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void SetUsedWeapon(WeaponController controller)
-    { 
+    {
         UsedWeapon = controller;
 
         if (UsedWeapon == null) SetNewFixMode(SupportClass.PlayerStateMode.Idle);
