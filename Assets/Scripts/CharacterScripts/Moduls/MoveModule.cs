@@ -6,6 +6,7 @@ public class MoveModule : CharacterBase {
     [Header("Move Setting")]
     [SerializeField] private float moveSpeed = 1;
     [SerializeField] private float sprintSpeed = 2;
+    [SerializeField] private float rotationSpeed = 5f;
 
     private bool isSprint = false;
 
@@ -24,7 +25,7 @@ public class MoveModule : CharacterBase {
 
                         Vector3 _vec = new Vector3(moveVector.y * moveSpeed, _rb.velocity.y, moveVector.x * moveSpeed);
                         float _angle = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg + mainCamera.transform.eulerAngles.y;
-                        playerAnim.transform.rotation = Quaternion.Euler(0.0f, _angle, 0.0f);
+                        playerAnim.transform.rotation = Quaternion.Lerp(playerAnim.transform.rotation, Quaternion.Euler(0.0f, _angle, 0.0f),rotationSpeed*Time.deltaTime);
 
                         _rb.velocity = transform.TransformVector(_vec);
 
