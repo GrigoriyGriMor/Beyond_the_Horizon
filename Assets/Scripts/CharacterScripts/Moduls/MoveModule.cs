@@ -24,7 +24,14 @@ public class MoveModule : CharacterBase {
 
                         Vector3 _vec = new Vector3(moveVector.y * moveSpeed, _rb.velocity.y, moveVector.x * moveSpeed);
                         float _angle = Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg + mainCamera.transform.eulerAngles.y;
-                        playerAnim.transform.rotation = Quaternion.Euler(0.0f, _angle, 0.0f);
+
+
+                        ///
+                        float speedRotate = 4.0f; 
+                        playerAnim.transform.rotation = Quaternion.Lerp(playerAnim.transform.rotation, 
+                            Quaternion.Euler(0.0f, _angle, 0.0f), Time.deltaTime * speedRotate);
+                        ////
+                        //playerAnim.transform.rotation = Quaternion.Euler(0.0f, _angle, 0.0f);
 
                         _rb.velocity = transform.TransformVector(_vec);
 
