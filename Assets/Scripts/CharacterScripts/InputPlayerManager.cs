@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class InputPlayerManager : MonoBehaviour {
+public class InputPlayerManager : MonoBehaviour
+{
     public PlayerController player;
 
     public CarBase carBase;
@@ -13,6 +14,7 @@ public class InputPlayerManager : MonoBehaviour {
     [SerializeField] private Vector2 mouseAxis = Vector2.zero;
 
     [Header("Control Buttons")]
+   
     public KeyCode jump = KeyCode.Space;
     public KeyCode sprint = KeyCode.LeftShift;
     public KeyCode crouch = KeyCode.LeftControl;
@@ -36,21 +38,20 @@ public class InputPlayerManager : MonoBehaviour {
     public KeyCode openMap = KeyCode.M;
     public KeyCode openInventory = KeyCode.I;
     public KeyCode openJournal = KeyCode.J;
-
     public KeyCode escapeButton = KeyCode.Escape;
-
     public KeyCode lookCameraRotation = KeyCode.C;
-
     private bool clientControl = true;
 
-    public void ClientControl(bool b) {
+    public void ClientControl(bool b)
+    {
         clientControl = b;
 
         if (!clientControl)
             player.DialogIsActive();
     }
 
-    private void Update() {
+    private void Update()
+    {
 
         if (Input.GetKeyDown(openQuickMenu))
             player.UseQuickSystem();
@@ -66,6 +67,7 @@ public class InputPlayerManager : MonoBehaviour {
 
         if (!clientControl) return;
 
+
         //for test
         moveAxis = new Vector2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal"));
         mouseAxis = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
@@ -76,11 +78,13 @@ public class InputPlayerManager : MonoBehaviour {
         else
             player.CameraRotate(mouseAxis, true);
 
-        if (carBase) {
+        if (carBase)
+        {
             carBase.SetAxis(moveAxis);
             return;
         }
-        else {
+        else
+        {
             // Use move controller
             player.MoveCharacter(moveAxis);
         }
@@ -136,8 +140,12 @@ public class InputPlayerManager : MonoBehaviour {
             player.UseSkill(1);
 
     }
+
+   
+
 }
-public enum Keys : uint {
+public enum Keys : uint
+{
     none = 0b00000000000000000000000000000000,
 
     //контролирующие кнопки

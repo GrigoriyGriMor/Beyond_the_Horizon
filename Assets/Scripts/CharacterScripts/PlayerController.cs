@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AttackModule attackModule;
     [SerializeField] private InDamageModule inDamageModule;
     [SerializeField] private SkillsModule skillsModule;
+    [SerializeField] private DashModule dashModule;
 
     [SerializeField] private InventoryController inventoryModule;
 
@@ -89,6 +90,8 @@ public class PlayerController : MonoBehaviour
         if (inventoryModule != null && inventoryModule.enabled) inventoryModule.Init(this, weaponModule);
         if (skillsModule != null && skillsModule.enabled) skillsModule.Init(visual, _rb, playerAnim, spineBone, mainCamera, this);
         if (GetComponent<ChecknteractbleObj>()) GetComponent<ChecknteractbleObj>().Init(mainCamera);
+        if (dashModule.enabled) dashModule.Init(visual, _rb, playerAnim, spineBone, mainCamera, this);
+
 
         cameraView = mainCamera.fieldOfView;
 
@@ -212,24 +215,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis = moveVector;
             moveController.MoveAxis(moveAxis, mode, isCrouching);
-
-            if (moveAxis == Vector2.zero)
-            {
-                if (isSprint)
-                {
-                    SprintControl(false);
-                }
-
-                {
-                if (isOneKeyDown && refOneKeyDown == null)
-                    isSecondKeyDown = true;
-                }
-            }
-            else
-            {
-                isOneKeyDown = true;
-                refOneKeyDown = StartCoroutine(OneKeyDown());
-            }
+                      
         }
     }
     #endregion
@@ -248,16 +234,7 @@ public class PlayerController : MonoBehaviour
         refOneKeyDown = null;
         isOneKeyDown = false;
     }
-
-    private Coroutine refOneSprint;
-    private IEnumerator OneSprint()
-    {
-        SprintControl(true);
-        yield return new WaitForSeconds(1.0f);
-        SprintControl(false);
-        refOneSprint = null;
-    }
-
+   
     #region _Jump
     public void Jump()
     {
