@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class SingletonMN<S> : MonoBehaviour where S : SingletonMN<S>
+public class SingletonMN<T> : MonoBehaviour where T : SingletonMN<T>
 {
-    private static S instance;
-    public static S Instance { get => instance; }
+    private static T instance;
+    public static T Instance { get => instance; }
 
     public static bool IsInstantiated { get => instance != null; }
 
@@ -12,7 +12,7 @@ public class SingletonMN<S> : MonoBehaviour where S : SingletonMN<S>
         if (instance != null)
             Debug.LogWarning("[Singleton] Trying to instantiate a second instance of singleton class.");
         else
-            instance = (S)this;
+            instance = (T)this;
     }
 
     protected virtual void OnDestroy()
